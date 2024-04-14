@@ -5,6 +5,7 @@ const typeDefs = `
         username: String!
         email: String!
         password: String!
+        events: [Event]   
     }
 
     type Event {
@@ -13,6 +14,12 @@ const typeDefs = `
         description: String!
         price: String
         date: String
+        userId: ID
+    }
+
+    type Message {
+        msg: String!
+        err: String
     }
 
     type Query {
@@ -22,7 +29,11 @@ const typeDefs = `
         event(_id: ID!): Event
     }
 
-    # type Mutation {}
+    type Mutation {
+        addUser(username: String!, email: String!, password: String): User
+        removeUser(_id: ID!): Message
+        updateUser(username: String, email: String): Message
+    }
 `
 
 module.exports = typeDefs;
