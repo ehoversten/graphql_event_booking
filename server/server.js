@@ -5,6 +5,7 @@ const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
 const { typeDefs, resolvers } = require('./schemas');
 
+const db = require('./config/connection');
 const PORT = process.env.PORT || 3001;
 const server = new ApolloServer({
     typeDefs,
@@ -23,9 +24,12 @@ const startApolloServer = async () => {
     // Define the Server Endpoint --> Plug Apollo into Express
     app.use('/graphql', expressMiddleware(server))
 
-    app.listen(PORT, () => {
-        console.log(`API server running on port ${PORT}!`);
-        console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
+    db.once('open', () => {
+        console.log("Database Connected...");
+        app.listen(PORT, () => {
+            console.log(`API server running on port ${PORT}!`);
+            console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
+        })
     })
 }
 
