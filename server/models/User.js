@@ -38,7 +38,7 @@ const userSchema = new Schema(
     }
 );
 // -- Hash Password -- //
-userSchema.pre('save', async (next) => {
+userSchema.pre('save', async function(next) {
     if(this.isNew || this.isModified('password')) {
         const salt = 10;
         this.password = await bcrypt.hash(this.password, salt);
@@ -46,7 +46,7 @@ userSchema.pre('save', async (next) => {
     next();
 });
 // -- Custom Methods -- // 
-userSchema.methods.isCorrectPassword = async (password) => {
+userSchema.methods.isCorrectPassword = async function(password) {
     return bcrypt.compare(password, this.password);
 };
 // -- Virtual Fields -- //

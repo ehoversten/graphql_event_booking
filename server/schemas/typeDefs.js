@@ -5,21 +5,33 @@ const typeDefs = `
         username: String!
         email: String!
         password: String!
-        events: [Event]   
+        events_created: [Event]   
     }
 
     type Event {
         _id: ID!
         title: String!
         description: String!
-        price: String
+        price: Float
         date: String
-        userId: ID
+        creator: ID
     }
 
     type Message {
         msg: String!
         err: String
+    }
+
+    input UserInput {
+        email: String!
+        password: String!
+    }
+
+    input EventInput {
+        title: String!
+        description: String!
+        price: Float
+        date: String!
     }
 
     type Query {
@@ -33,6 +45,9 @@ const typeDefs = `
         addUser(username: String!, email: String!, password: String): User
         removeUser(_id: ID!): Message
         updateUser(username: String, email: String): Message
+
+        addNewEvent(eventInput: EventInput!): Message
+        addEvent(title: String!, description: String!, price: Float, date: String!): Message
     }
 `
 
