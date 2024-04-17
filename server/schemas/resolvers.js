@@ -7,7 +7,7 @@ const resolvers = {
         users: async () => {
             // return users;
             try {
-                const users = await User.find({});
+                const users = await User.find({}).populate('events_created');
                 return users;
             } catch (err) {
                 console.error(err);
@@ -22,29 +22,45 @@ const resolvers = {
 
             const user = await User.findOne({ email: args.email });
             console.log("Found: ", user);
+            console.log("Ver: ", user.__v);
+            console.log("Doc: ", user._doc);
             return user;
         },
         // -- EVENT QUERIES -- // 
-        events: () => {
-            return events;
-        },
+        events: async () => {
+            // return events;
+            try {
+                const events = await Event.find();
+                console.log("Events: ", events);
+                return events;
+            } catch (error) {
+                console.log("erorr: ", error);
+                throw Error(error);
+            }
+        },  
         event: (parent, args, context) => {
 
-            const foundEvent = events.find(event => event._id == args._id);
-            return foundEvent;
+            // const foundEvent = events.find(event => event._id == args._id);
+            // return foundEvent;
+
+            try {
+                
+            } catch (error) {
+                
+            }
         }
     },
-    User: {
-        events_created: (parent, args, context) => {
-            console.log("Parent: ", parent);
-            console.log("Args: ", args);
-            const foundEvents = events.filter(event => {
-                return event.userId == parent._id;
-            })
-            console.log("Found: ", foundEvents);
-            return foundEvents;
-        }
-    },
+    // User: {
+    //     events_created: (parent, args, context) => {
+    //         console.log("Parent: ", parent);
+    //         // console.log("Args: ", args);
+    //         const foundEvents = events.filter(event => {
+    //             return event.userId == parent._id;
+    //         })
+    //         console.log("Found: ", foundEvents);
+    //         return foundEvents;
+    //     }
+    // },
     Mutation: {
         // -- USER MUTATIONS -- //
         // addUser: (parent, { username, email, password }, context) => {
@@ -110,14 +126,62 @@ const resolvers = {
             // console.log("Users: ", users);
             // // return updatedUser;
             // return { msg: "User Updated"}
+
         },
         // -- EVENT MUTATIONS -- //
-        addEvent: (parent, args, context) => {
+        addEvent: async (parent, args, context) => {
             console.log("Args: ", args);
-            return { msg: "Event Created" }
+            // return { msg: "Event Created" }
+            try {
+                const newEvent = await Event.create(args);
+                const updateUser = await User.findOneAndUpdate(
+                    { _id: args.creator },
+                    { $addToSet: { events_created: newEvent._id } },
+                    { new: true }
+                )
+                console.log("Created: ", newEvent);
+                console.log("User Data: ", updateUser);
+                return newEvent;
+            } catch (error) {
+                console.log("Error: ", error);
+                throw Error(error);
+            }
         } ,
-        addNewEvent: (parent, args, context) => {
-            return { msg: "New Event Created"}
+        addNewEvent: async (parent, args, context) => {
+            console.log("Args: ", args);
+            try {
+                const newEvent = await Event.create(args.eventInput);
+                console.log("Created: ", newEvent);
+                console.log("Doc: ", newEvent._doc);
+                // return newEvent;
+                return { msg: "New Event Created"}
+            } catch (error) {
+                console.log("Error: ", error);
+                throw Error(error);
+            }
+        },
+        removeEvent: async (parent, { _id }, context) => {
+            try {
+                const removingEvent = await Event.findByIdAndDelete(_id);
+                console.log(removingEvent);
+                return { msg: "New Event Created"}
+            } catch (error) {
+                console.log("error: ", error);
+                return { msg: "Error", error: error};
+            }
+            
+        },
+        updateEvent: async (parent, args, context) => {
+            try {
+                const updateEvent = await Event.findByIdAndUpdate(args._id, ...args, { new: true });
+               /* const updateEvent = await Event.findByIdAndUpdate(
+                                                        { _id: args._id }, 
+                                                        { $set: args}, 
+                                                        { runValidators: true, new: true }); */
+            } catch (error) {
+                console.log("error: ", error);
+                return { msg: "Error", error: error};
+            }
         }
     }
 }

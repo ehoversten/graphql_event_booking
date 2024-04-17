@@ -17,6 +17,14 @@ const typeDefs = `
         creator: ID
     }
 
+    type Booking {
+        _id: ID!
+        user: User!
+        event: Event!
+        createdAt: String!
+        udpatedAt: String!
+    }
+
     type Message {
         msg: String!
         err: String
@@ -32,6 +40,7 @@ const typeDefs = `
         description: String!
         price: Float
         date: String!
+        creator: ID!
     }
 
     type Query {
@@ -47,7 +56,9 @@ const typeDefs = `
         updateUser(username: String, email: String): Message
 
         addNewEvent(eventInput: EventInput!): Message
-        addEvent(title: String!, description: String!, price: Float, date: String!): Message
+        addEvent(title: String!, description: String!, price: Float, date: String!, creator: ID!): Event
+        removeEvent(_id: ID!): Message
+        updateEvent(_id: ID!): Message
     }
 `
 
