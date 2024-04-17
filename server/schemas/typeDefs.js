@@ -48,6 +48,8 @@ const typeDefs = `
         user(email: String!): User
         events: [Event]
         event(_id: ID!): Event
+        bookings: [Booking]
+        booking: Booking
     }
 
     type Mutation {
@@ -59,6 +61,9 @@ const typeDefs = `
         addEvent(title: String!, description: String!, price: Float, date: String!, creator: ID!): Event
         removeEvent(_id: ID!): Message
         updateEvent(_id: ID!): Message
+
+        newBooking(userId: ID, eventId: ID!): Booking!
+        cancelBooking(eventId: ID!): Booking!
     }
 `
 

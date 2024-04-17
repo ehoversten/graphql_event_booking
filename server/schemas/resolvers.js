@@ -1,5 +1,5 @@
 const { users, events } = require('../models/tempData');
-const { User, Event } = require('../models/index');
+const { User, Event, Booking } = require('../models/index');
 
 const resolvers = {
     Query: {
@@ -12,7 +12,8 @@ const resolvers = {
                 return users;
             } catch (err) {
                 console.error(err);
-                return null
+                // return null
+                return { msg: "Error", err: err };
             }
         },
         user: async (parent, args, context) => {
@@ -30,7 +31,8 @@ const resolvers = {
                 return user;
             } catch (error) {
                 console.log("erorr: ", error);
-                throw Error(error);
+                // throw Error(error);
+                return { msg: "Error", err: error };
             }
         },
         // -- EVENT QUERIES -- // 
@@ -42,26 +44,49 @@ const resolvers = {
                 return events;
             } catch (error) {
                 console.log("erorr: ", error);
-                throw Error(error);
+                // throw Error(error);
+                return { msg: "Error", err: error };
             }
         },  
-        event: (parent, args, context) => {
-
+        event: async (parent, { _id }, context) => {
+            
             // const foundEvent = events.find(event => event._id == args._id);
             // return foundEvent;
-
+            
             try {
-                
+                const foundEvent = await Event.findById(_id);
+                return foundEvent;
             } catch (error) {
-                
+                return { msg: "Error", err: error };
             }
-        }
+        },
+        // -- BOOKING QUERIES -- // 
+        bookings: async (parent, args, context) => {
+            try {
+                const allBookings = await Booking.find()
+                                                .populate('user')
+                                                .populate('event');
+                return allBookings;
+            } catch (error) {
+                return { msg: "Error", err: error };
+            }
+        },
+        booking: async (parent, { _id }, context) => {
+            try {
+                const booking = await Booking.findById(_id)
+                                            .populate('user')
+                                            .populate('event');
+                return booking;
+            } catch (error) {
+                return { msg: "Error", err: error };
+            }
+        },
     },
     // User: {
-    //     events_created: (parent, args, context) => {
-    //         console.log("Parent: ", parent);
-    //         // console.log("Args: ", args);
-    //         const foundEvents = events.filter(event => {
+        //     events_created: (parent, args, context) => {
+            //         console.log("Parent: ", parent);
+            //         // console.log("Args: ", args);
+            //         const foundEvents = events.filter(event => {
     //             return event.userId == parent._id;
     //         })
     //         console.log("Found: ", foundEvents);
@@ -88,7 +113,7 @@ const resolvers = {
                 return newUser;
             } catch(err) {
                 console.error(err);
-                return 
+                return { msg: "Error", err: error };
             }
             
         },
@@ -109,7 +134,7 @@ const resolvers = {
                 return { msg: "User Removed" }
             } catch (error) {
                 console.error(err);
-                return 
+                return { msg: "Error", err: error };
             }
         },
         updateUser: (parent, args, context) => {
@@ -145,15 +170,16 @@ const resolvers = {
                     { _id: args.creator },
                     { $addToSet: { events_created: newEvent._id } },  // add new events but not duplicates
                     { new: true }
-                )
+                    )
                 console.log("Created: ", newEvent);
                 console.log("User Data: ", updateUser);
                 return newEvent;
             } catch (error) {
                 console.log("Error: ", error);
-                throw Error(error);
+                // throw Error(error);
+                return { msg: "Error", err: error };
             }
-        } ,
+        },
         addNewEvent: async (parent, args, context) => {
             console.log("Args: ", args);
             try {
@@ -161,10 +187,11 @@ const resolvers = {
                 console.log("Created: ", newEvent);
                 console.log("Doc: ", newEvent._doc);
                 // return newEvent;
-                return { msg: "New Event Created"}
+                return { msg: "New Event Created", err: null}
             } catch (error) {
                 console.log("Error: ", error);
-                throw Error(error);
+                // throw Error(error);
+                return { msg: "Error", err: error };
             }
         },
         removeEvent: async (parent, { _id }, context) => {
@@ -172,31 +199,70 @@ const resolvers = {
                 const removingEvent = await Event.findById(_id);
                 console.log("Event to Remove: ", removingEvent)
                 const updateUser = await User.findByIdAndUpdate(
-                                                { _id: removingEvent.creator }, 
-                                                { $pull: { events_created: { _id } } },
-                                                { new: true })
+                    { _id: removingEvent.creator }, 
+                    { $pull: { events_created: { _id } } },
+                    { new: true })
                 console.log("User: ", updateUser);
                 await Event.findByIdAndDelete(_id);
                 return { msg: "Event Removed"}
             } catch (error) {
                 console.log("error: ", error);
-                return { msg: "Error", error: JSON.stringify(error)};
+                return { msg: "Error", err: JSON.stringify(error)};
             }
             
         },
         updateEvent: async (parent, args, context) => {
             try {
                 const updateEvent = await Event.findByIdAndUpdate(args._id, ...args, { new: true });
-               /* const updateEvent = await Event.findByIdAndUpdate(
-                                                        { _id: args._id }, 
-                                                        { $set: args}, 
-                                                        { runValidators: true, new: true }); */
+                /* const updateEvent = await Event.findByIdAndUpdate(
+                    { _id: args._id }, 
+                    { $set: args}, 
+                    { runValidators: true, new: true }); */
+                } catch (error) {
+                    console.log("error: ", error);
+                    return { msg: "Error", err: error};
+                }
+        },
+        // -- BOOKING MUTATIONS -- //
+        newBooking: async (parent, { userId, eventId }, context) => {
+            try {
+                // Create Booking Instance
+                const newBooking = await Booking.create({ user: userId, event: eventId });
+                console.log("New Booking: ", newBooking);
+                // Associate other Models
+                
+                // --- OR --- (Q. Which is better methodology(?)) // 
+                
+                // Find Event by Id
+                // Find User by Id
+                // Create Booking Instance
+                const bookingData = await Booking.findById(newBooking._id)
+                                                    .populate('user')
+                                                    .populate('event');
+                return bookingData;
+                // return { msg: "Booking Confirmed", err: null};
             } catch (error) {
                 console.log("error: ", error);
-                return { msg: "Error", error: error};
+                return { msg: "Error", err: error};
+            }
+        },
+        cancelBooking: async (parent, { eventId }, context) => {
+            try {
+                const foundBooking = await Booking.findById(eventId)
+                                                    .populate('user')
+                                                    .populate('event');
+                console.log("Booking to delete: ", foundBooking)
+                await Booking.findByIdAndDelete(eventId);
+                console.log("Booking cancelled");
+                // return { msg: "Booking cancelled", err: null }
+                return foundBooking;
+                // return { msg: "Booking cancelled", err: error }
+            } catch (error) {
+                console.log("Cancelling Error: ", error);
+                return { msg: "Booking cancelled", err: error }
             }
         }
     }
-}
-
+}   
+        
 module.exports = resolvers;
