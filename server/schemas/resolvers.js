@@ -8,10 +8,11 @@ const resolvers = {
             // return users;
             try {
                 const users = await User.find({}).populate('events_created');
+                console.log("Users: ", users);
                 return users;
             } catch (err) {
                 console.error(err);
-                return
+                return null
             }
         },
         user: async (parent, args, context) => {
@@ -19,12 +20,18 @@ const resolvers = {
             // const foundUser = users.find(user => user.email == args.email);
             // console.log("User: ", foundUser);
             // return foundUser;
-
-            const user = await User.findOne({ email: args.email });
-            console.log("Found: ", user);
-            console.log("Ver: ", user.__v);
-            console.log("Doc: ", user._doc);
-            return user;
+            try {
+                const user = await User
+                                    .findOne({ email: args.email })
+                                    .populate('events_created');
+                console.log("Found: ", user);
+                // console.log("Ver: ", user.__v);
+                // console.log("Doc: ", user._doc);
+                return user;
+            } catch (error) {
+                console.log("erorr: ", error);
+                throw Error(error);
+            }
         },
         // -- EVENT QUERIES -- // 
         events: async () => {
@@ -136,7 +143,7 @@ const resolvers = {
                 const newEvent = await Event.create(args);
                 const updateUser = await User.findOneAndUpdate(
                     { _id: args.creator },
-                    { $addToSet: { events_created: newEvent._id } },
+                    { $addToSet: { events_created: newEvent._id } },  // add new events but not duplicates
                     { new: true }
                 )
                 console.log("Created: ", newEvent);
@@ -162,12 +169,18 @@ const resolvers = {
         },
         removeEvent: async (parent, { _id }, context) => {
             try {
-                const removingEvent = await Event.findByIdAndDelete(_id);
-                console.log(removingEvent);
-                return { msg: "New Event Created"}
+                const removingEvent = await Event.findById(_id);
+                console.log("Event to Remove: ", removingEvent)
+                const updateUser = await User.findByIdAndUpdate(
+                                                { _id: removingEvent.creator }, 
+                                                { $pull: { events_created: { _id } } },
+                                                { new: true })
+                console.log("User: ", updateUser);
+                await Event.findByIdAndDelete(_id);
+                return { msg: "Event Removed"}
             } catch (error) {
                 console.log("error: ", error);
-                return { msg: "Error", error: error};
+                return { msg: "Error", error: JSON.stringify(error)};
             }
             
         },

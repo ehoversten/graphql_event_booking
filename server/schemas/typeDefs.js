@@ -5,7 +5,7 @@ const typeDefs = `
         username: String!
         email: String!
         password: String!
-        events_created: [Event]   
+        events_created: [Event]
     }
 
     type Event {
