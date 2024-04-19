@@ -4,12 +4,13 @@ const path = require('path');
 const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
 const { typeDefs, resolvers } = require('./schemas');
+const jwt = require('jsonwebtoken');
 
 const db = require('./config/connection');
 const PORT = process.env.PORT || 3001;
 const server = new ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,  
 })
 
 // Create a new instance of an Express Server
@@ -22,7 +23,30 @@ const startApolloServer = async () => {
     app.use(express.urlencoded({ extended: false }));
     app.use(express.json());
     // Define the Server Endpoint --> Plug Apollo into Express
-    app.use('/graphql', expressMiddleware(server))
+    app.use('/graphql', expressMiddleware(server, {
+        context: async ({req, res}) => {
+            // Get the user token from the headers.
+            const token = req.headers.authorization || req.query.token || '';
+
+            if(req.headers.authorization) {
+                token = token.split(' ')[1];
+            }
+
+            if(!token) {
+                return req;
+            }
+
+            console.log("Token: ", token);
+            try {
+                const isValid = jwt.verify(token, process.env.SECRET, { maxAge: expiration });
+                console.log("Auth: ", isValid);
+            } catch (error) {
+                console.log("Invalid Token");
+            }
+
+            return req;
+        }
+    }))
 
     db.once('open', () => {
         console.log("Database Connected...");

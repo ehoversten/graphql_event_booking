@@ -1,5 +1,9 @@
 const { users, events } = require('../models/tempData');
 const { User, Event, Booking } = require('../models/index');
+const { GraphQLError } = require('graphql');
+const jwt = require('jsonwebtoken');
+require('dotenv').config()
+
 
 const resolvers = {
     Query: {
@@ -8,7 +12,7 @@ const resolvers = {
             // return users;
             try {
                 const users = await User.find({}).populate('events_created');
-                console.log("Users: ", users);
+                // console.log("Users: ", users);
                 return users;
             } catch (err) {
                 console.error(err);
@@ -261,7 +265,37 @@ const resolvers = {
                 console.log("Cancelling Error: ", error);
                 return { msg: "Booking cancelled", err: error }
             }
-        }
+        },
+        // -- AUTHORIZATION MUTATIONS -- //
+        login: async (_, { userInput: { email, password }}, context) => {
+            console.log(email, password);
+        },
+        // register: async (_, { userInput: { username, email, password }}, context) => {
+        register: async (_, { userInput }, context) => {
+            // console.log(args);
+            console.log(userInput);
+            try {
+                const user = await User.findOne({ email: userInput.email});
+                if(user) {
+                    throw new GraphQLError("User with that email already exists");
+                }
+                const newUser = await User.create(userInput);
+                console.log("New User: ", newUser);
+                const payload = { 
+                                   username: userInput.username, 
+                                   email: userInput.email,
+                                   password: userInput.password
+                                }
+    
+                const token = await jwt.sign({ data: payload }, process.env.SECRET, { expiresIn: '1h' })
+                console.log("Token: ", token);
+    
+                return { token, newUser };
+            } catch (error) {
+                console.log("Error: ", error)
+                throw new GraphQLError("Registration Error");
+            }
+        } 
     }
 }   
         
