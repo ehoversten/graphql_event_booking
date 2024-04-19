@@ -25,12 +25,23 @@ const typeDefs = `
         udpatedAt: String!
     }
 
+    type Auth {
+        token: ID!
+        user: User
+    }
+
     type Message {
         msg: String!
         err: String
     }
 
     input UserInput {
+        username: String!
+        email: String!
+        password: String!
+    }
+
+    input LoginInput {
         email: String!
         password: String!
     }
@@ -64,6 +75,9 @@ const typeDefs = `
 
         newBooking(userId: ID, eventId: ID!): Booking!
         cancelBooking(eventId: ID!): Booking!
+
+        login(loginInput: LoginInput!): Auth
+        register(userInput: UserInput!): Auth
     }
 `
 

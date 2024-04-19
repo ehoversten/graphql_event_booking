@@ -1,5 +1,9 @@
 const { users, events } = require('../models/tempData');
 const { User, Event, Booking } = require('../models/index');
+const { GraphQLError } = require('graphql');
+const jwt = require('jsonwebtoken');
+require('dotenv').config()
+
 
 const resolvers = {
     Query: {
@@ -8,7 +12,7 @@ const resolvers = {
             // return users;
             try {
                 const users = await User.find({}).populate('events_created');
-                console.log("Users: ", users);
+                // console.log("Users: ", users);
                 return users;
             } catch (err) {
                 console.error(err);
@@ -49,7 +53,9 @@ const resolvers = {
             }
         },  
         event: async (parent, { _id }, context) => {
-            
+          //  console.log("context: ", context);
+            console.log("context: ", context.user);
+            // console.log("context: ", context.body);
             // const foundEvent = events.find(event => event._id == args._id);
             // return foundEvent;
             
@@ -261,7 +267,63 @@ const resolvers = {
                 console.log("Cancelling Error: ", error);
                 return { msg: "Booking cancelled", err: error }
             }
-        }
+        },
+        // -- AUTHORIZATION MUTATIONS -- //
+        login: async (_, { loginInput }, context) => {
+            console.log("input data: ", loginInput );
+
+            try {
+                // find user in database
+                const foundUser = await User.findOne({ email: loginInput.email });
+                if(!foundUser) {
+                    throw new GraphQLError("User not found");
+                }
+                // validate password
+                const isValid = await foundUser.isCorrectPassword(loginInput.password);
+                if(!isValid) {
+                    throw new GraphQLError("User not Authorized");
+                }
+                // create a token to return with the User instance
+
+                const token = jwt.sign({ data: { 
+                                          _id: foundUser._id, 
+                                          username: foundUser.username, 
+                                          email: foundUser.email,  
+                                        }}, process.env.SECRET, { expiresIn: '1h' });
+                console.log('Token: ', token);
+                
+                return { token, user: foundUser }
+
+            } catch (error) {
+                console.log("Error: ", error)
+                throw new GraphQLError("Login Error");
+            }
+        },
+        register: async (_, { userInput }, context) => {
+            // console.log(args);
+            console.log(userInput);
+            try {
+                const user = await User.findOne({ email: userInput.email});
+                if(user) {
+                    throw new GraphQLError("User with that email already exists");
+                }
+                const newUser = await User.create(userInput);
+                // console.log("New User: ", newUser);
+                const payload = { 
+                                   username: userInput.username, 
+                                   email: userInput.email,
+                                   password: userInput.password
+                                }
+    
+                const token = jwt.sign({ data: payload }, process.env.SECRET, { expiresIn: '1h' })
+                console.log("Token: ", token);
+    
+                return { token, user: newUser };
+            } catch (error) {
+                console.log("Error: ", error)
+                throw new GraphQLError("Registration Error");
+            }
+        } 
     }
 }   
         
