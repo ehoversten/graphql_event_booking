@@ -53,7 +53,9 @@ const resolvers = {
             }
         },  
         event: async (parent, { _id }, context) => {
-            
+          //  console.log("context: ", context);
+            console.log("context: ", context.user);
+            // console.log("context: ", context.body);
             // const foundEvent = events.find(event => event._id == args._id);
             // return foundEvent;
             

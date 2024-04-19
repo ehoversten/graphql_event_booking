@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 // Import Apollo Server Class
 const { ApolloServer } = require('@apollo/server');
+const { GraphQLError } = require('graphql');
 const { expressMiddleware } = require('@apollo/server/express4');
 const { typeDefs, resolvers } = require('./schemas');
 const jwt = require('jsonwebtoken');
@@ -26,21 +27,24 @@ const startApolloServer = async () => {
     app.use('/graphql', expressMiddleware(server, {
         context: async ({req, res}) => {
             // Get the user token from the headers.
-            const token = req.headers.authorization || req.query.token || '';
+            let token = req.headers.authorization || req.query.token || '';
+            // console.log("Token: ", token);
 
             if(req.headers.authorization) {
                 token = token.split(' ')[1];
             }
 
             if(!token) {
-                return req;
+                return req
             }
 
             console.log("Token: ", token);
             try {
-                const isValid = jwt.verify(token, process.env.SECRET, { maxAge: expiration });
+                const isValid = jwt.verify(token, process.env.SECRET, { maxAge: '1h' });
                 console.log("Auth: ", isValid);
+                req.user = isValid.data;
             } catch (error) {
+                console.log("Context Error: ", error);
                 console.log("Invalid Token");
             }
 
