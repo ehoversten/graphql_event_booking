@@ -267,10 +267,36 @@ const resolvers = {
             }
         },
         // -- AUTHORIZATION MUTATIONS -- //
-        login: async (_, { userInput: { email, password }}, context) => {
-            console.log(email, password);
+        login: async (_, { loginInput }, context) => {
+            console.log("input data: ", loginInput );
+
+            try {
+                // find user in database
+                const foundUser = await User.findOne({ email: loginInput.email });
+                if(!foundUser) {
+                    throw new GraphQLError("User not found");
+                }
+                // validate password
+                const isValid = await foundUser.isCorrectPassword(loginInput.password);
+                if(!isValid) {
+                    throw new GraphQLError("User not Authorized");
+                }
+                // create a token to return with the User instance
+
+                const token = jwt.sign({ data: { 
+                                          _id: foundUser._id, 
+                                          username: foundUser.username, 
+                                          email: foundUser.email,  
+                                        }}, process.env.SECRET, { expiresIn: '1h' });
+                console.log('Token: ', token);
+                
+                return { token, user: foundUser }
+
+            } catch (error) {
+                console.log("Error: ", error)
+                throw new GraphQLError("Login Error");
+            }
         },
-        // register: async (_, { userInput: { username, email, password }}, context) => {
         register: async (_, { userInput }, context) => {
             // console.log(args);
             console.log(userInput);
@@ -280,17 +306,17 @@ const resolvers = {
                     throw new GraphQLError("User with that email already exists");
                 }
                 const newUser = await User.create(userInput);
-                console.log("New User: ", newUser);
+                // console.log("New User: ", newUser);
                 const payload = { 
                                    username: userInput.username, 
                                    email: userInput.email,
                                    password: userInput.password
                                 }
     
-                const token = await jwt.sign({ data: payload }, process.env.SECRET, { expiresIn: '1h' })
+                const token = jwt.sign({ data: payload }, process.env.SECRET, { expiresIn: '1h' })
                 console.log("Token: ", token);
     
-                return { token, newUser };
+                return { token, user: newUser };
             } catch (error) {
                 console.log("Error: ", error)
                 throw new GraphQLError("Registration Error");
