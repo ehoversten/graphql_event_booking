@@ -14,7 +14,7 @@ const typeDefs = `
         description: String!
         price: Float
         date: String
-        creator: ID
+        creator: User
     }
 
     type Booking {

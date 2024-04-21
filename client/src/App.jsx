@@ -13,8 +13,8 @@ import Landing from './components/Landing/Landing';
 
 // Contstruct the GraphQL Endpoint '/graphql'
 const httpLink = createHttpLink({
-  // uri: '/graphql',
-  uri: 'http://localhost:3001/graphql'
+  uri: '/graphql',
+  // uri: 'http://localhost:3001/graphql'
 });
 
 // Setup Middleware that will attach the JWT token to each request to the server

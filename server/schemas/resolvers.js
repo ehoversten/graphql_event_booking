@@ -43,7 +43,7 @@ const resolvers = {
         events: async () => {
             // return events;
             try {
-                const events = await Event.find();
+                const events = await Event.find().populate('creator');
                 console.log("Events: ", events);
                 return events;
             } catch (error) {
@@ -60,7 +60,7 @@ const resolvers = {
             // return foundEvent;
             
             try {
-                const foundEvent = await Event.findById(_id);
+                const foundEvent = await Event.findById(_id).populate('creator')
                 return foundEvent;
             } catch (error) {
                 return { msg: "Error", err: error };
