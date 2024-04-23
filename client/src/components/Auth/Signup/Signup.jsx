@@ -1,7 +1,11 @@
 import React, { useState, useRef, useEffect, createRef } from 'react';
-
+import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import { REGISTER } from '../../../utils/mutations';
+import { GraphQLError } from 'graphql';
 
 function Signup() {
+  const navigate = useNavigate();
   const [userFormData, setUserFormData] = useState({
     username: '',
     email: '',
@@ -20,18 +24,49 @@ function Signup() {
     userInputRef.current?.focus();
   }, []);
 
+  const [register, { error, loading }] = useMutation(REGISTER);
+
+  if(error) return (<h2>Error ${error}</h2>)
+  if(loading) return (<h2>LOADING...</h2>)
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value })
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     console.log("Submitting ");
 
     console.log("Username: ", userInputRef.current.value);
     console.log("Email: ", emailInputRef.current.value);
     console.log("Password: ", passInputRef.current.value);
+
+    // let userInput = {
+    //   username: userFormData.username,
+    //   email: userFormData.email,
+    //   password: userFormData.password
+    // }
+    let userInput = {
+      username: username,
+      email: email,
+      password: password
+    }
+
+    try {
+      const { data } = await register({
+        variables: { userInput: userInput }
+      });
+      console.log("New User: ", data);
+      if(data.register.token) {
+        localStorage.setItem('id_token', JSON.stringify(data.register.token))
+      }
+      navigate('/landing')
+    } catch (error) {
+      console.log("Error: ", error);
+      throw new GraphQLError("User Signup Failed")
+    }
+
   } 
 
   return (

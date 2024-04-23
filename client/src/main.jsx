@@ -7,6 +7,7 @@ import Login from './components/Auth/Login/Login.jsx';
 import Signup from './components/Auth/Signup/Signup.jsx';
 import './index.css';
 import Dashboard from './components/Dashboard/Dashboard.jsx';
+import Landing from './components/Landing/Landing.jsx';
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: 'events',
         element: <Dashboard />
+      },
+      {
+        path: 'landing',
+        element: <Landing />
       }
     ]
   }
