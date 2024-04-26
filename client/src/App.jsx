@@ -9,6 +9,7 @@ import Navigation from './components/Navigation/Navigation';
 import Login from './components/Auth/Login/Login';
 import Signup from './components/Auth/Signup/Signup';
 import Landing from './components/Landing/Landing';
+import EventsContainer from './components/Events/EventsContainer/EventsContainer';
 
 
 // Contstruct the GraphQL Endpoint '/graphql'
@@ -38,14 +39,14 @@ function App() {
 
   return (
     <AuthProvider>
-
       <ApolloProvider client={client}>
         <BrowserRouter>
           <h1>Welcome to the Events Booking Homepage</h1>
           <Navigation />
           <Routes>
             <Route path='/' element={<Landing />}/>
-            <Route path='/events' element={<Dashboard />}/>
+            <Route path='/dashboard' element={<Dashboard />}/>
+            <Route path='/events' element={<EventsContainer />}/>
             <Route path='/login' element={<Login />}/>
             <Route path='/signup' element={<Signup />}/>
           </Routes>

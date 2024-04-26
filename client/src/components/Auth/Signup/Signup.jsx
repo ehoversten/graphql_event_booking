@@ -80,6 +80,7 @@ function Signup() {
           <label htmlFor="username">Enter Username</label>
           <input 
             type="text" 
+            name='username'
             id="username" 
             ref={userInputRef}
             value={username}
@@ -89,6 +90,7 @@ function Signup() {
           <label htmlFor="email">Enter Email</label>
           <input 
             type="email" 
+            name='email'
             id="email" 
             ref={emailInputRef}
             value={email}
@@ -98,6 +100,7 @@ function Signup() {
           <label htmlFor="password">Enter password</label>
           <input 
             type="password" 
+            name='password'
             id="password" 
             ref={passInputRef}
             value={password}

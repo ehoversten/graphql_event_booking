@@ -40,11 +40,17 @@ const resolvers = {
             }
         },
         // -- EVENT QUERIES -- // 
-        events: async () => {
+        events: async (parent, args, context) => {
+            // console.log("context: ", context);
+            console.log("context data: ", context.user);
+            if(!context.user) {
+                console.log("No User Authorized");
+                // return { msg: "Please Log In" }
+            }
             // return events;
             try {
                 const events = await Event.find().populate('creator');
-                console.log("Events: ", events);
+                // console.log("Events: ", events);
                 return events;
             } catch (error) {
                 console.log("erorr: ", error);
@@ -53,8 +59,8 @@ const resolvers = {
             }
         },  
         event: async (parent, { _id }, context) => {
-          //  console.log("context: ", context);
-            console.log("context: ", context.user);
+         //  console.log("context: ", context);
+            console.log("user: ", context.user);
             // console.log("context: ", context.body);
             // const foundEvent = events.find(event => event._id == args._id);
             // return foundEvent;
@@ -169,6 +175,7 @@ const resolvers = {
         // -- EVENT MUTATIONS -- //
         addEvent: async (parent, args, context) => {
             console.log("Args: ", args);
+            console.log('Context: ', context.user);
             // return { msg: "Event Created" }
             try {
                 const newEvent = await Event.create(args);
@@ -186,12 +193,28 @@ const resolvers = {
                 return { msg: "Error", err: error };
             }
         },
-        addNewEvent: async (parent, args, context) => {
-            console.log("Args: ", args);
+        addNewEvent: async (parent, { eventInput }, context) => {
+            console.log("Args: ", eventInput);
+            console.log("Context: ", context.user);
+            
             try {
-                const newEvent = await Event.create(args.eventInput);
+                const { title, description, price, date } = eventInput;
+                const templateEvent = {
+                    title: title,
+                    description: description,
+                    price: price,
+                    date: date,
+                    creator: context.user._id
+                }
+                 const newEvent = await Event.create(templateEvent);
+                 const updatedUser = await User.findByIdAndUpdate(
+                    { _id: context.user._id },
+                    { $addToSet: { events_created: newEvent }},
+                    { new: true }
+                 )
                 console.log("Created: ", newEvent);
-                console.log("Doc: ", newEvent._doc);
+                console.log("Updated: ", updatedUser);
+                // console.log("Doc: ", newEvent._doc);
                 // return newEvent;
                 return { msg: "New Event Created", err: null}
             } catch (error) {
