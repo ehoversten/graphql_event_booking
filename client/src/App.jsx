@@ -32,6 +32,7 @@ const authLink = setContext((_, { headers }) => {
 // Setup the Client to use our middleware
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
+  connectToDevTools: true,
   cache: new InMemoryCache()
 })
 

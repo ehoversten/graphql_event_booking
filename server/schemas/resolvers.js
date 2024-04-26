@@ -224,6 +224,10 @@ const resolvers = {
             }
         },
         removeEvent: async (parent, { _id }, context) => {
+            console.log("User: ", context.user)
+            if(!context.user) {
+                return { msg: "No User Authorized" }
+            }
             try {
                 const removingEvent = await Event.findById(_id);
                 console.log("Event to Remove: ", removingEvent)
