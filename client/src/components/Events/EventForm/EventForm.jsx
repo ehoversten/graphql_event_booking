@@ -1,9 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { useMutation } from '@apollo/client';
-import { NEW_EVENT, ADD_EVENT } from '../../../utils/mutations';
 
-
-function EventForm() {
+function EventForm({ addNewEvent }) {
 
     const [eventForm, setEventForm] = useState({
         title: '',
@@ -12,15 +9,7 @@ function EventForm() {
         date: ''
     });
 
-    //const [addEvent, {error, loading}] = useMutation(NEW_EVENT);
-    const [addNewEvent, {error, loading}] = useMutation(ADD_EVENT);
-
-    if(loading) return (<h2>LOADING...</h2>)
-    if(error) return (<h2>ERROR...</h2>)
-
     const handleChange = (event) => {
-        // console.log(event.target.name)
-        // console.log(event.target.value)
         const { name, value } = event.target;
         setEventForm((prevState) => {
             return {
@@ -33,13 +22,11 @@ function EventForm() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-       // const { data } = await addEvent(eventForm)
         const { data } = await addNewEvent({
             variables: { eventInput: eventForm }
         })
+        // console.log("New Evt: ", data);
 
-        console.log("New Evt: ", data);
-        // -- LIFT STATE UP -- //
         setEventForm({
             title: '',
             description: '',
