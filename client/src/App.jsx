@@ -10,7 +10,7 @@ import Login from './components/Auth/Login/Login';
 import Signup from './components/Auth/Signup/Signup';
 import Landing from './components/Landing/Landing';
 import EventsContainer from './components/Events/EventsContainer/EventsContainer';
-
+import Bookings from './components/Booking/Bookings';
 
 // Contstruct the GraphQL Endpoint '/graphql'
 const httpLink = createHttpLink({
@@ -50,6 +50,7 @@ function App() {
             <Route path='/events' element={<EventsContainer />}/>
             <Route path='/login' element={<Login />}/>
             <Route path='/signup' element={<Signup />}/>
+            <Route path='/bookings' element={<Bookings />} />
           </Routes>
         </BrowserRouter>
       </ApolloProvider>

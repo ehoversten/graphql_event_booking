@@ -74,12 +74,16 @@ const resolvers = {
         },
         // -- BOOKING QUERIES -- // 
         bookings: async (parent, args, context) => {
+            console.log("Running BOOKINGS query");
+            console.log("CONTEXT: ", context.user)
             try {
                 const allBookings = await Booking.find()
-                                                .populate('user')
-                                                .populate('event');
+                                                .populate('userId')
+                                                .populate('eventId');
+                console.log("Found: ", allBookings);
                 return allBookings;
             } catch (error) {
+                console.log("Server Error: ", error);
                 return { msg: "Error", err: error };
             }
         },
@@ -198,12 +202,14 @@ const resolvers = {
             console.log("Context: ", context.user);
             
             try {
-                const { title, description, price, date } = eventInput;
+                const { title, description, price, date, time, max_attendance } = eventInput;
                 const templateEvent = {
                     title: title,
                     description: description,
                     price: price,
                     date: date,
+                    time: time,
+                    max_attendance: max_attendance,
                     creator: context.user._id
                 }
                  const newEvent = await Event.create(templateEvent);
@@ -257,10 +263,13 @@ const resolvers = {
                 }
         },
         // -- BOOKING MUTATIONS -- //
-        newBooking: async (parent, { userId, eventId }, context) => {
+        newBooking: async (parent, { eventId }, context) => {
+            console.log("Context: ", context.user)
+            const userId = context.user._id
+            if(!context.user) throw new GraphQLError("No User Authorized");
             try {
                 // Create Booking Instance
-                const newBooking = await Booking.create({ user: userId, event: eventId });
+                const newBooking = await Booking.create({ userId: userId, eventId: eventId });
                 console.log("New Booking: ", newBooking);
                 // Associate other Models
                 
@@ -269,11 +278,13 @@ const resolvers = {
                 // Find Event by Id
                 // Find User by Id
                 // Create Booking Instance
-                const bookingData = await Booking.findById(newBooking._id)
-                                                    .populate('user')
-                                                    .populate('event');
-                return bookingData;
-                // return { msg: "Booking Confirmed", err: null};
+                // const bookingData = await Booking.findById(newBooking._id)
+                //                                     .populate('userId')
+                //                                     .populate('eventId');
+
+                // return bookingData;
+                return { msg: "Booking Confirmed", err: null};
+                // return newBooking
             } catch (error) {
                 console.log("error: ", error);
                 return { msg: "Error", err: error};
@@ -282,8 +293,8 @@ const resolvers = {
         cancelBooking: async (parent, { eventId }, context) => {
             try {
                 const foundBooking = await Booking.findById(eventId)
-                                                    .populate('user')
-                                                    .populate('event');
+                                                    .populate('userId')
+                                                    .populate('eventId');
                 console.log("Booking to delete: ", foundBooking)
                 await Booking.findByIdAndDelete(eventId);
                 console.log("Booking cancelled");

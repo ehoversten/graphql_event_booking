@@ -55,3 +55,12 @@ export const REMOVE_EVENT = gql`
         }
     }
 `
+
+export const ADD_BOOKING = gql`
+    mutation NewBooking($eventId: ID!) {
+        newBooking(eventId: $eventId) {
+            msg
+            err
+        }
+    }
+`

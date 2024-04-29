@@ -14,15 +14,17 @@ const typeDefs = `
         description: String!
         price: Float
         date: String
+        time: String
+        isBooked: Boolean
+        max_attendance: Int
         creator: User
+        to_attend: [User]
     }
 
     type Booking {
         _id: ID!
-        user: User!
-        event: Event!
-        createdAt: String!
-        udpatedAt: String!
+        userId: User
+        eventId: Event
     }
 
     type Auth {
@@ -49,8 +51,10 @@ const typeDefs = `
     input EventInput {
         title: String!
         description: String!
-        price: String
+        price: Float
         date: String!
+        time: String!
+        max_attendance: Int!
     }
 
     type Query {
@@ -72,7 +76,7 @@ const typeDefs = `
         removeEvent(_id: ID!): Message
         updateEvent(_id: ID!): Message
 
-        newBooking(userId: ID, eventId: ID!): Booking!
+        newBooking(eventId: ID!): Message!
         cancelBooking(eventId: ID!): Booking!
 
         login(loginInput: LoginInput!): Auth

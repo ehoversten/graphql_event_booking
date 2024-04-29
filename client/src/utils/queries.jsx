@@ -10,6 +10,10 @@ export const GET_USERS = gql`
                 _id 
                 title
             }
+            events_attenting {
+                _id
+                eventId
+            }
         }
     }
 `
@@ -38,10 +42,18 @@ export const GET_EVENTS = gql`
             title
             description
             date
+            time
             price
+            isBooked
+            max_attendance
             creator {
                 _id
                 username
+            }
+            to_attend {
+                # _id
+                username
+                email
             }
         }
     }
@@ -58,6 +70,21 @@ export const GET_EVENT = gql`
             creator {
                 username
                 email
+            }
+        }
+    }
+`
+
+export const GET_BOOKINGS = gql`
+    query Bookings {
+        bookings {
+            _id
+            userId {
+                username
+                email
+            }
+            eventId {
+                title
             }
         }
     }
