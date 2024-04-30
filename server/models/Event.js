@@ -26,7 +26,7 @@ const eventSchema = new Schema(
             type: Boolean,
             default: false
         },
-        max_attendance: {
+        max_attendance: { 
             type: Number,
             required: true
         },

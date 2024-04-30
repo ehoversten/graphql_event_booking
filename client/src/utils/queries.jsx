@@ -85,6 +85,9 @@ export const GET_BOOKINGS = gql`
             }
             eventId {
                 title
+                description
+                date
+                time
             }
         }
     }
