@@ -10,9 +10,8 @@ export const GET_USERS = gql`
                 _id 
                 title
             }
-            events_attenting {
+            events_attending {
                 _id
-                eventId
             }
         }
     }

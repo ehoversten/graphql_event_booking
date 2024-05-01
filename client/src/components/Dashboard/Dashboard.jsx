@@ -19,7 +19,7 @@ function Dashboard() {
   }
   if(error) {
     console.log("Error: ", error);
-    return (<h3>Error: {error}</h3>)
+    return (<h3>Error: </h3>)
   }
 
   return (

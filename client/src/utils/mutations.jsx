@@ -64,3 +64,12 @@ export const ADD_BOOKING = gql`
         }
     }
 `
+
+export const CANCEL_BOOKING = gql`
+    mutation CancelBooking($eventId: ID!) {
+        cancelBooking(eventId: $eventId) {
+            msg
+            err
+        }
+    }
+`

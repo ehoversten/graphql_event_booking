@@ -6,6 +6,7 @@ const typeDefs = `
         email: String!
         password: String!
         events_created: [Event]
+        events_attending: [Booking]
     }
 
     type Event {
@@ -77,7 +78,7 @@ const typeDefs = `
         updateEvent(_id: ID!): Message
 
         newBooking(eventId: ID!): Message!
-        cancelBooking(eventId: ID!): Booking!
+        cancelBooking(eventId: ID!): Message!
 
         login(loginInput: LoginInput!): Auth
         register(userInput: UserInput!): Auth

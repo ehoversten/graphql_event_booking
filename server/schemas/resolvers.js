@@ -334,6 +334,7 @@ const resolvers = {
             }
         },
         cancelBooking: async (parent, { eventId }, context) => {
+            console.log("Booking to Cancel: ", eventId);
 
             // Check Booking -> does it exist(?)
             //      - update Event - isBooked --> FALSE
@@ -367,8 +368,8 @@ const resolvers = {
 
                 await Booking.findByIdAndDelete(eventId);
                 console.log("Booking cancelled");
-                // return { msg: "Booking cancelled", err: null }
-                return foundBooking;
+                return { msg: "Booking cancelled", err: null }
+                // return foundBooking;
                 // return { msg: "Booking cancelled", err: error }
             } catch (error) {
                 console.log("Cancelling Error: ", error);
