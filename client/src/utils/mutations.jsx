@@ -26,6 +26,15 @@ export const REGISTER = gql`
     }
 `
 
+export const LOGOUT = gql`
+    mutation Logout {
+        logout {
+            msg
+            err
+        }
+    }
+`
+
 export const NEW_EVENT = gql`
     mutation addEvent($title: String!, $description: String!, $price: Float, $date: String!, $creator: ID!) {
         addEvent(title: $title, description: $description, price: $price, date: $date, creator: $creator) {
