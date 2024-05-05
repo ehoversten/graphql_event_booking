@@ -56,7 +56,7 @@ function Login() {
 
 
   return (
-    <div className="login-container container mx-auto p-3 bg-sky-700 mt-2 sm:mx-auto sm:w-full sm:max-w-sm">
+    <div className="login-container container mx-auto p-5 bg-sky-700 mt-2 sm:mx-auto sm:w-full sm:max-w-sm rounded-2xl">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
             className="mx-auto h-10 w-auto"
@@ -69,25 +69,25 @@ function Login() {
         </div>
       <form className="login-form" onSubmit={handleSubmit}>
         <div className="form-control mt-2">
-          <label htmlFor="email" className="block text-sm font-medium leading-6 text-slate-300">Email</label>
+          <label htmlFor="email" className="block text-sm font-medium leading-6 text-slate-300 mb-1">Email</label>
           <input 
             type="email"
             name='email'
             id="email" 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6"
             />
         </div>
         <div className="form-control mt-2">
-          <label htmlFor="password" className="block text-sm font-medium leading-6 text-slate-300">Password</label>
+          <label htmlFor="password" className="block text-sm font-medium leading-6 text-slate-300 mb-1">Password</label>
           <input 
             type="password"
             name='password'
             id="password" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6"
             />
         </div>
         <button type="submit" className="flex w-full justify-center rounded-md bg-orange-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 mt-5  ">Submit</button>
