@@ -18,6 +18,18 @@ const eventSchema = new Schema(
             type: Date,
             required: true
         },
+        time: {
+            type: String,
+            required: true
+        },
+        isBooked: {
+            type: Boolean,
+            default: false
+        },
+        max_attendance: { 
+            type: Number,
+            required: true
+        },
         creator: {
             type: Schema.Types.ObjectId,
             ref: 'User'
@@ -36,6 +48,7 @@ const eventSchema = new Schema(
     }
 );
 
+// create isFull virtual(?)
 
 const Event = model('Event', eventSchema);
 

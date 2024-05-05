@@ -11,7 +11,9 @@ const resolvers = {
         users: async () => {
             // return users;
             try {
-                const users = await User.find({}).populate('events_created');
+                const users = await User.find({})
+                                        .populate('events_created')
+                                        .populate('events_attending');
                 // console.log("Users: ", users);
                 return users;
             } catch (err) {
@@ -28,7 +30,8 @@ const resolvers = {
             try {
                 const user = await User
                                     .findOne({ email: args.email })
-                                    .populate('events_created');
+                                    .populate('events_created')
+                                    .populate('events_attending');
                 console.log("Found: ", user);
                 // console.log("Ver: ", user.__v);
                 // console.log("Doc: ", user._doc);
@@ -40,11 +43,19 @@ const resolvers = {
             }
         },
         // -- EVENT QUERIES -- // 
-        events: async () => {
+        events: async (parent, args, context) => {
+            // console.log("context: ", context);
+            console.log("context data: ", context.user);
+            if(!context.user) {
+                console.log("No User Authorized");
+                // return { msg: "Please Log In" }
+            }
             // return events;
             try {
-                const events = await Event.find();
-                console.log("Events: ", events);
+                const events = await Event.find()
+                                          .populate('creator')
+                                          .populate('to_attend');
+                // console.log("Events: ", events);
                 return events;
             } catch (error) {
                 console.log("erorr: ", error);
@@ -53,14 +64,16 @@ const resolvers = {
             }
         },  
         event: async (parent, { _id }, context) => {
-          //  console.log("context: ", context);
-            console.log("context: ", context.user);
+         //  console.log("context: ", context);
+            console.log("user: ", context.user);
             // console.log("context: ", context.body);
             // const foundEvent = events.find(event => event._id == args._id);
             // return foundEvent;
             
             try {
-                const foundEvent = await Event.findById(_id);
+                const foundEvent = await Event.findById(_id)
+                                              .populate('creator')
+                                              .populate('to_attend');
                 return foundEvent;
             } catch (error) {
                 return { msg: "Error", err: error };
@@ -68,20 +81,25 @@ const resolvers = {
         },
         // -- BOOKING QUERIES -- // 
         bookings: async (parent, args, context) => {
+            console.log("Running BOOKINGS query");
+            console.log("CONTEXT: ", context.user)
+
             try {
                 const allBookings = await Booking.find()
-                                                .populate('user')
-                                                .populate('event');
+                                                .populate('userId')
+                                                .populate('eventId');
+                console.log("Found: ", allBookings);
                 return allBookings;
             } catch (error) {
+                console.log("Server Error: ", error);
                 return { msg: "Error", err: error };
             }
         },
         booking: async (parent, { _id }, context) => {
             try {
                 const booking = await Booking.findById(_id)
-                                            .populate('user')
-                                            .populate('event');
+                                            .populate('userId')
+                                            .populate('eventId');
                 return booking;
             } catch (error) {
                 return { msg: "Error", err: error };
@@ -169,6 +187,7 @@ const resolvers = {
         // -- EVENT MUTATIONS -- //
         addEvent: async (parent, args, context) => {
             console.log("Args: ", args);
+            console.log('Context: ', context.user);
             // return { msg: "Event Created" }
             try {
                 const newEvent = await Event.create(args);
@@ -186,12 +205,30 @@ const resolvers = {
                 return { msg: "Error", err: error };
             }
         },
-        addNewEvent: async (parent, args, context) => {
-            console.log("Args: ", args);
+        addNewEvent: async (parent, { eventInput }, context) => {
+            console.log("Args: ", eventInput);
+            console.log("Context: ", context.user);
+            
             try {
-                const newEvent = await Event.create(args.eventInput);
+                const { title, description, price, date, time, max_attendance } = eventInput;
+                const templateEvent = {
+                    title: title,
+                    description: description,
+                    price: price,
+                    date: date,
+                    time: time,
+                    max_attendance: max_attendance,
+                    creator: context.user._id
+                }
+                 const newEvent = await Event.create(templateEvent);
+                 const updatedUser = await User.findByIdAndUpdate(
+                    { _id: context.user._id },
+                    { $addToSet: { events_created: newEvent }},
+                    { new: true }
+                 )
                 console.log("Created: ", newEvent);
-                console.log("Doc: ", newEvent._doc);
+                console.log("Updated: ", updatedUser);
+                // console.log("Doc: ", newEvent._doc);
                 // return newEvent;
                 return { msg: "New Event Created", err: null}
             } catch (error) {
@@ -201,6 +238,10 @@ const resolvers = {
             }
         },
         removeEvent: async (parent, { _id }, context) => {
+            console.log("User: ", context.user)
+            if(!context.user) {
+                return { msg: "No User Authorized" }
+            }
             try {
                 const removingEvent = await Event.findById(_id);
                 console.log("Event to Remove: ", removingEvent)
@@ -230,38 +271,105 @@ const resolvers = {
                 }
         },
         // -- BOOKING MUTATIONS -- //
-        newBooking: async (parent, { userId, eventId }, context) => {
+        newBooking: async (parent, { eventId }, context) => {
+            console.log("Context: ", context.user)
+            const userId = context.user._id
+            if(!context.user) throw new GraphQLError("No User Authorized");
+
+            // Check Event -> max_attendance == to_attend.length (?)
+            //      - update isBooked --> TRUE
+            //      - add User --> to_attend
+            // Create New Booking
+            // Add New Booking to User -> events_attending
+
             try {
+                const checkEvent = await Event.findById(eventId);
+                console.log("Found Event: ", checkEvent);
+                // validate 
+                if(checkEvent.isBooked || checkEvent.max_attendance == checkEvent.to_attend.length) {
+                    throw new GraphQLError("Event is already booked!")
+                }
                 // Create Booking Instance
-                const newBooking = await Booking.create({ user: userId, event: eventId });
+                const newBooking = await Booking.create({ userId: userId, eventId: eventId });
                 console.log("New Booking: ", newBooking);
-                // Associate other Models
-                
-                // --- OR --- (Q. Which is better methodology(?)) // 
+                // -- Associate other Models -- //
+                // Update User --> events_attending
+                const updatedUser = await User.findByIdAndUpdate(
+                    { _id: context.user._id },
+                    { $addToSet: { events_attending: newBooking._id }},
+                    { new: true}
+                );
+                console.log("Updated User: ", updatedUser)
+
+                // Update Event --> to_attend
+                let updatedEvent = await Event.findByIdAndUpdate(
+                    { _id: eventId },
+                    { $addToSet: { to_attend: context.user._id }},
+                    { new: true }
+                )
+                // Check to update --> isBooked
+                if(updatedEvent.to_attend.length == checkEvent.max_attendance) {
+                    updatedEvent = await Event.findByIdAndUpdate(
+                        { _id: eventId },
+                        { $set: { isBooked: true } },
+                        { new: true }
+                    )
+                }
+                console.log("Updated Event: ", updatedEvent);
+                    // --- OR --- (Q. Which is better methodology(?)) // 
                 
                 // Find Event by Id
                 // Find User by Id
                 // Create Booking Instance
-                const bookingData = await Booking.findById(newBooking._id)
-                                                    .populate('user')
-                                                    .populate('event');
-                return bookingData;
-                // return { msg: "Booking Confirmed", err: null};
+                // const bookingData = await Booking.findById(newBooking._id)
+                //                                     .populate('userId')
+                //                                     .populate('eventId');
+
+                // return bookingData;
+                // return newBooking
+                return { msg: "Booking Confirmed", err: null};
             } catch (error) {
                 console.log("error: ", error);
                 return { msg: "Error", err: error};
             }
         },
         cancelBooking: async (parent, { eventId }, context) => {
+            console.log("Booking to Cancel: ", eventId);
+
+            // Check Booking -> does it exist(?)
+            //      - update Event - isBooked --> FALSE
+            //      - update Event --> to_attend - remove userId ref
+            //      - update User --> events_attending - remove bookingId ref
+            // Delete Booking
+
             try {
                 const foundBooking = await Booking.findById(eventId)
-                                                    .populate('user')
-                                                    .populate('event');
+                                                    .populate('userId')
+                                                    .populate('eventId');
                 console.log("Booking to delete: ", foundBooking)
+                if(!foundBooking) {
+                    throw new GraphQLError('No Booking Found')
+                }
+
+                const updatedEvent = await Event.findByIdAndUpdate(
+                    { _id: eventId },
+                    { $pull: { to_attend: foundBooking.userId._id } },
+                    { $set: { isBooked: false } },
+                    { new: true }
+                )
+                console.log("Updated Event: ", updatedEvent);
+                
+                const updatedUser = await User.findByIdAndUpdate(
+                    { _id: foundBooking.userId._id },
+                    { $pull: { events_attending: foundBooking.eventId._id } },
+                    { new: true }
+                )
+                console.log("Updated User: ", updatedUser);
+
                 await Booking.findByIdAndDelete(eventId);
                 console.log("Booking cancelled");
-                // return { msg: "Booking cancelled", err: null }
-                return foundBooking;
+                return { msg: "Booking cancelled", err: null }
+                // return foundBooking;
                 // return { msg: "Booking cancelled", err: error }
             } catch (error) {
                 console.log("Cancelling Error: ", error);
@@ -310,9 +418,10 @@ const resolvers = {
                 const newUser = await User.create(userInput);
                 // console.log("New User: ", newUser);
                 const payload = { 
-                                   username: userInput.username, 
-                                   email: userInput.email,
-                                   password: userInput.password
+                                   _id: newUser._id,
+                                   username: newUser.username, 
+                                   email: newUser.email,
+                                //    password: userInput.password
                                 }
     
                 const token = jwt.sign({ data: payload }, process.env.SECRET, { expiresIn: '1h' })

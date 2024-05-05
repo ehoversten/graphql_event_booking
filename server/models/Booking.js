@@ -2,11 +2,11 @@ const { Schema, model } = require('mongoose');
 
 const bookingSchema = new Schema(
     {
-        user: {
+        userId: {
             type: Schema.Types.ObjectId,
             ref: 'User'
         },
-        event: {
+        eventId: {
             type: Schema.Types.ObjectId,
             ref: 'Event'
         }

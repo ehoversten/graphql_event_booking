@@ -27,9 +27,15 @@ const userSchema = new Schema(
         events_attending: [
             {
                 type: Schema.Types.ObjectId,
-                ref: 'Event'
+                ref: 'Booking'
             }
-        ]
+        ],
+        // bookings: [
+        //     {
+        //         type: Schema.Types.ObjectId,
+        //         ref: 'Booking'
+        //     }
+        // ]
     },
     {
         toJSON: {
