@@ -42,15 +42,17 @@ function App() {
     <AuthProvider>
       <ApolloProvider client={client}>
         <BrowserRouter>
-          <h1>Welcome to the Events Booking Homepage</h1>
           <Navigation />
           <Routes>
-            <Route path='/' element={<Landing />}/>
-            <Route path='/dashboard' element={<Dashboard />}/>
-            <Route path='/events' element={<EventsContainer />}/>
-            <Route path='/login' element={<Login />}/>
-            <Route path='/signup' element={<Signup />}/>
-            <Route path='/bookings' element={<Bookings />} />
+            <Route path='/' element={<Landing />}>
+              <Route path='events' element={<EventsContainer />}/> 
+            </Route>
+            <Route path='login' element={<Login />}/>
+            <Route path='signup' element={<Signup />}/>
+            <Route path='dashboard' element={<Dashboard />}>
+              <Route path='events' element={<EventsContainer />}/> 
+            </Route>
+            <Route path='bookings' element={<Bookings />} />
           </Routes>
         </BrowserRouter>
       </ApolloProvider>

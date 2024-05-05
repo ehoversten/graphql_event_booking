@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Events({ events, removeEvent, newBooking }) {
+function Events({ events, removeEvent, newBooking, isLoggedIn }) {
 
   const handleDelete = async (_id) => {
     console.log("ID: ", _id);
@@ -23,10 +23,10 @@ function Events({ events, removeEvent, newBooking }) {
   }
 
   return (
-    <div className='list-container'>
+    <div className='bg-sky-800 divide-y divide-slate-700'>
       { events.length == 0 ? <h3>No Current Events</h3> :
         events?.length && events?.map(event => (
-        <div className="event-card" key={event._id}>
+        <div className="event-card p-5" key={event._id}>
           <h3 className="event-title">Title: {event.title}</h3>
           <p className="event-desc">Desc: {event.description}</p>
           <p className="event-price">Price: {event.price}</p>
@@ -34,8 +34,12 @@ function Events({ events, removeEvent, newBooking }) {
           <h4 className="event-time">Time: {event.time}</h4>
           <p className="event-attendees">Number of Attendees: {event.max_attendance}</p>
           <p className="event-creator">Created By: {event.creator.username}</p>
-          <button className="delete-event" onClick={() => handleDelete(event._id)} value={event._id}>Delete</button>
-          <button className="book-event" onClick={() => bookEvent(event._id)} value={event._id}>Book This!</button>
+          { isLoggedIn ? (
+            <>
+              <button className="delete-event" onClick={() => handleDelete(event._id)} value={event._id}>Delete</button>
+              <button className="book-event" onClick={() => bookEvent(event._id)} value={event._id}>Book This!</button>
+            </>
+          ) : "" }
         </div>
       ))}
     </div>

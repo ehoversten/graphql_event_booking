@@ -6,6 +6,8 @@ import { GET_EVENTS } from '../../../utils/queries';
 import { ADD_EVENT, REMOVE_EVENT, ADD_BOOKING } from '../../../utils/mutations';
 
 function EventsContainer() {
+  const token = localStorage.getItem('id_token');
+
   const {error, loading, data } = useQuery(GET_EVENTS);
   const [addNewEvent, addEventData] = useMutation(ADD_EVENT, {
     refetchQueries: [
@@ -29,9 +31,12 @@ function EventsContainer() {
 
   return (
     <>
-        <div>EventsContainer</div>
-        <Events events={events} removeEvent={removeEvent} newBooking={newBooking}/>
-        <EventForm addNewEvent={addNewEvent}/>
+        <div className='container mx-auto bg-sky-900'>
+          { token && (
+            <EventForm addNewEvent={addNewEvent}/>
+          )}
+          <Events events={events} removeEvent={removeEvent} newBooking={newBooking} isLoggedIn={token}/>
+        </div>
     </>
   )
 }

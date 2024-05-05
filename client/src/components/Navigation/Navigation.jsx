@@ -11,13 +11,25 @@ function Navigation() {
   }
 
   return (
-    <div>
+    <div className='text-center mx-auto bg-sky-600 flex-col divide-y divide-slate-700 w-full'>
+      <div className="link-row p-3">
         <Link to='/login'>Login</Link>
+      </div>
+      <div className="link-row p-3">
         <Link to='/signup'>Register</Link>
+      </div>
+      <div className="link-row p-3">
         <Link to='/'>Home</Link>
+      </div>
+      <div className="link-row p-3">
         <Link to='/events'>Events</Link>
+      </div>
+      <div className="link-row p-3">
         <Link to='/bookings'>Bookings</Link>
-        <button className="logout" onClick={handleLogout}>Logout</button>
+      </div>
+      <div className="link-row p-3">
+        <a onClick={handleLogout} className='logout-btn'>Logout</a>
+      </div>
     </div>
   )
 }

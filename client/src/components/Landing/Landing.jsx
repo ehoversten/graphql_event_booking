@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, Outlet } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { GET_EVENTS, GET_EVENT } from '../../utils/queries';
 
@@ -14,7 +15,13 @@ function Landing() {
 
 
   return (
-    <div>Landing</div>
+    <div className='p-5 border-2 border-sky-700 text-center'>
+      <h1 className='text-2xl font-bold '>Welcome to BookIT - Explore Local Events!</h1>
+      <div className="link-row p-3">
+        <Link to='/events' className=''>Check out the current events!</Link>
+      </div>
+      <Outlet />
+    </div>
   )
 }
 
