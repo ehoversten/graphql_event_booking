@@ -42,7 +42,12 @@ function EventsContainer() {
     <>
         <div className='container mx-auto bg-sky-900'>
           { currentEvent && (
-            <EventDetail current={currentEvent} isLoggedIn={token}/>
+            <EventDetail 
+              current={currentEvent} 
+              isLoggedIn={token}
+              removeEvent={removeEvent} 
+              newBooking={newBooking}
+            />
           )}
           { token && (
             <EventForm addNewEvent={addNewEvent}/>
@@ -50,9 +55,9 @@ function EventsContainer() {
           <Events 
             events={events} 
             setChoice={handleChoice}
-            removeEvent={removeEvent} 
-            newBooking={newBooking} 
-            isLoggedIn={token}/>
+            // removeEvent={removeEvent} 
+            // newBooking={newBooking} 
+          />
         </div>
     </>
   )

@@ -1,6 +1,26 @@
 import React from 'react'
 
-function EventDetail({ current, isLoggedIn }) {
+function EventDetail({ current, isLoggedIn, removeEvent, newBooking }) {
+
+  const handleDelete = async (_id) => {
+    console.log("ID: ", _id);
+    try {
+      const { data } = await removeEvent({ variables: { id: _id }})
+      // console.log("Query Data: ", data)
+    } catch (error) {
+      console.log("Error: ", error)
+    }
+  }
+  
+  const bookEvent = async (_id) => {
+    console.log("ID: ", _id);
+    try {
+      await newBooking({ variables: { eventId: _id }})
+    } catch (error) {
+
+      console.log("Error: ", error)
+    }
+  }
 
   return (
     <>
