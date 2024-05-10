@@ -26,7 +26,7 @@ function EventDetail({ current, isLoggedIn, removeEvent, newBooking }) {
     <>
       {/* <div>EventDetail</div> */}
    
-      <div className="current-card p-5" key={current._id}>
+      <div className="current-card p-5 border-orange-600 rounded md:order-last" key={current._id}>
           <div className="sm:mx-auto sm:w-full sm:max-w-sm mr-5 flex-column content-center rounded-full bg-sky-900">
           <h3 className="current-title text-balance text-3xl font-bold underline decoration-sky-500 decoration-4 mb-4"> {current.title}</h3>
             <img
@@ -35,14 +35,17 @@ function EventDetail({ current, isLoggedIn, removeEvent, newBooking }) {
               alt="Your Company"
             />
           </div>
-          <div className="desc-container bg-sky-600 rounded-md p-4 m-5">
+          <div className="desc-container bg-sky-600 rounded-md p-4 m-5 min-h-40">
             <p className="current-desc ">{current.description}</p>
           </div>
-          <h4 className="current-date inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Date: {current.date}</h4>
-          <h4 className="current-time inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Time: {current.time}</h4>
-          <p className="current-price inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Price: ${current.price}</p>
-          <p className="current-attendees inline-block mr-5">Number of Attendees: {current.max_attendance}</p>
-          <p className="current-creator inline-block">Created By: {current.creator.username}</p>
+          <div className="event-card-info">
+            <h4 className="current-date inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Date: {current.date}</h4>
+            <h4 className="current-time inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Time: {current.time}</h4>
+            <p className="current-price inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Price: ${current.price}</p>
+            <p className="current-attendees inline-block mr-5">Number of Attendees: {current.max_attendance}</p>
+            <p className="current-creator inline-block">Created By: {current.creator.username}</p>
+
+          </div>
           { isLoggedIn ? (
             <>
             <div className="btn-container flex flex-row justify-evenly">

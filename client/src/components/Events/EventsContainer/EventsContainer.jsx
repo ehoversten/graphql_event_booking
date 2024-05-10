@@ -40,7 +40,7 @@ function EventsContainer() {
 
   return (
     <>
-        <div className='container mx-auto bg-sky-900'>
+        <div className='container mx-auto my-5 bg-sky-900 p-5 md:flex'>
           { currentEvent && (
             <EventDetail 
               current={currentEvent} 

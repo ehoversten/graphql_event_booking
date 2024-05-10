@@ -1,4 +1,5 @@
 import React from 'react'
+import './events.css'
 
 function Events({ events, removeEvent, newBooking, setChoice }) {
 
@@ -23,11 +24,11 @@ function Events({ events, removeEvent, newBooking, setChoice }) {
   }
 
   return (
-    <div className='bg-sky-800 divide-y divide-slate-700'>
+    <div className='event-card-container bg-sky-800 divide-y divide-slate-700 mx-auto mt-5'>
       { events.length == 0 ? <h3>No Current Events</h3> :
         events?.length && events?.map(event => (
         <div className="event-card p-5 flex justify-between" key={event._id} onClick={() => setChoice(event)}>
-          <div className="sm:mx-auto sm:w-full sm:max-w-sm mr-5 flex-column content-center rounded-full bg-sky-900">
+          <div className="sm:mx-auto sm:w-1/5 sm:max-w-sm mr-5 flex-column content-center rounded-full bg-sky-900">
             <img
               className="mx-auto h-10 w-auto align-middle"
               src="https://tailwindui.com/img/logos/mark.svg?color=orange&shade=600"
