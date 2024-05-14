@@ -16,14 +16,14 @@ if(localStorage.getItem('id_token')) {
     }
 }
 // Initalize our Context Instance
-const AuthContext = createContext({
+export const AuthContext = createContext({
     user: null,
     login: (userData) => {},
     logout: () => {} 
 });
 
 
-export const authReducer = (state, action) => {
+const authReducer = (state, action) => {
     switch(action.type) {
         case 'LOGIN': 
             return {
@@ -45,9 +45,10 @@ export const AuthProvider = (props) => {
 
     const login = (userData) => {
         localStorage.setItem('id_token', userData.token);
+        console.log("Storing Token")
         dispatch({
             type: 'LOGIN',
-            payload: userData
+            payload: userData.user
         })
     }
 

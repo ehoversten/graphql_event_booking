@@ -1,11 +1,13 @@
-import React, { useState, useRef, useEffect, createRef } from 'react';
+import React, { useState, useRef, useEffect, createRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { REGISTER } from '../../../utils/mutations';
 import { GraphQLError } from 'graphql';
+import { AuthContext } from '../../../context/authContext';
 
 function Signup() {
   const navigate = useNavigate();
+  const auth = useContext(AuthContext);
   const [userFormData, setUserFormData] = useState({
     username: '',
     email: '',
@@ -59,9 +61,10 @@ function Signup() {
       });
       console.log("New User: ", data);
       if(data.register.token) {
-        localStorage.setItem('id_token', JSON.stringify(data.register.token))
+        // localStorage.setItem('id_token', JSON.stringify(data.register.token))
+        auth.login(data.register)
       }
-      navigate('/landing')
+      navigate('/events')
     } catch (error) {
       console.log("Error: ", error);
       throw new GraphQLError("User Signup Failed")

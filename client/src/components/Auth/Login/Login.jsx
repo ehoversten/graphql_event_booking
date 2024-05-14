@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
 import { LOGIN } from '../../../utils/mutations'
 import { GraphQLError } from 'graphql' 
+import { AuthContext } from '../../../context/authContext'
 
 function Login() {
   const navigate = useNavigate();
-
+  const auth = useContext(AuthContext);
   const [loginFormData, setLoginFormData] = useState({
     email: '',
     password: ''
@@ -44,7 +45,8 @@ function Login() {
       console.log("Login Data: ", data);
 
       if(data.login.token) {
-        localStorage.setItem('id_token', data.login.token);
+        // localStorage.setItem('id_token', data.login.token);
+        auth.login(data.login);
       }
 
       navigate('/events');

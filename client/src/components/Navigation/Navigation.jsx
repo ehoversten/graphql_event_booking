@@ -1,9 +1,11 @@
-import React, { useState, useRef, createRef } from 'react';
+import React, { useRef, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../context/authContext';
 
 function Navigation() {
 
   const navRef = useRef()
+  const auth = useContext(AuthContext);
 
   const showNav = () => {
     navRef.current.classList.toggle('hidden')
@@ -11,7 +13,8 @@ function Navigation() {
 
   const handleLogout = () => {
     if(localStorage.getItem('id_token')) {
-      localStorage.removeItem('id_token');
+      // localStorage.removeItem('id_token');
+      auth.logout();
     }
     console.log("Logged Out");
   }
@@ -54,16 +57,20 @@ function Navigation() {
           <div className="link-row p-3">
             <Link to='/bookings'>Bookings</Link>
           </div>
-          <div className="link-row p-3">
-            <Link to='/login'>Login</Link>
-          </div>
-          <div className="link-row p-3">
-            <Link to='/signup'>Register</Link>
-          </div>
-          <div className="link-row p-3">
-            <a onClick={handleLogout} className='logout-btn'>Logout</a>
-          </div>
-          
+          { auth.user ? (
+            <div className="link-row p-3">
+              <a onClick={handleLogout} className='logout-btn'>Logout</a>
+            </div>
+          ) : (
+            <>
+              <div className="link-row p-3">
+                <Link to='/login'>Login</Link>
+              </div>
+              <div className="link-row p-3">
+                <Link to='/signup'>Register</Link>
+              </div>
+            </>
+          )}
         </ul>
       </div>
       
