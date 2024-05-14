@@ -55,8 +55,6 @@ function EventsContainer() {
           <Events 
             events={events} 
             setChoice={handleChoice}
-            // removeEvent={removeEvent} 
-            // newBooking={newBooking} 
           />
         </div>
     </>

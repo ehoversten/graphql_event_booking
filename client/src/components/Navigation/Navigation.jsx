@@ -39,27 +39,20 @@ function Navigation() {
         />
       </svg>
       <div class="hidden w-full md:flex md:items-center md:w-auto md:justify-end" id="menu" ref={navRef}>
-        <ul
-          class="
-            text-base text-gray-700
-            md:flex
-            md:justify-between
-            md:pt-0
-            divide-y divide-slate-700"
-        >
-          <div className="link-row p-3">
-            <Link to='/'>Home</Link>
+        <ul class="text-base text-gray-700 md:flex md:justify-between md:pt-0 divide-y divide-slate-700">
+          <div className="link-row p-3 font-bold">
+            <Link to='/' className='font-bold'>Home</Link>
           </div>
           <div className="link-row p-3">
-            <Link to='/events'>Events</Link>
+            <Link to='/events' className='font-bold'>Events</Link>
           </div>
 
           <div className="link-row p-3">
-            <Link to='/bookings'>Bookings</Link>
+            <Link to='/bookings' className='font-bold'>Bookings</Link>
           </div>
           { auth.user ? (
             <div className="link-row p-3">
-              <a onClick={handleLogout} className='logout-btn'>Logout</a>
+              <a onClick={handleLogout} className='logout-btn font-bold'>Logout</a>
             </div>
           ) : (
             <>

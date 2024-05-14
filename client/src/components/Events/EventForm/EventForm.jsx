@@ -118,7 +118,7 @@ function EventForm({ addNewEvent }) {
                         />
                 </div>
                 <div className="form-control mt-2 flex-1">
-                    <label htmlFor="max_attendance">Max Allowed Attendees: </label>
+                    <label htmlFor="max_attendance">Max Attendees: </label>
                     <input 
                         type='number' 
                         name='max_attendance'
