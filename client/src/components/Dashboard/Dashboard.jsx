@@ -26,9 +26,9 @@ function Dashboard() {
   return (
     <div className='p-5 border-2 border-sky-700 text-center'>
       <h1 className='text-2xl font-bold '>Dashboard</h1>
-      <div className="link-row p-3">
+      {/* <div className="link-row p-3">
         <Link to='/dashboard/events'>Check out the current events!</Link>
-      </div>
+      </div> */}
       <Outlet />
     </div>
   )

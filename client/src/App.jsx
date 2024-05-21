@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { AuthProvider } from './context/authContext';
-import './App.css';
 import Dashboard from './components/Dashboard/Dashboard';
 import Navigation from './components/Navigation/Navigation';
 import Login from './components/Auth/Login/Login';
@@ -13,6 +12,7 @@ import Landing from './components/Landing/Landing';
 import EventsContainer from './components/Events/EventsContainer/EventsContainer';
 import Bookings from './components/Booking/Bookings';
 import Modal from './components/Modal/Modal';
+import './App.css';
 
 // Contstruct the GraphQL Endpoint '/graphql'
 const httpLink = createHttpLink({

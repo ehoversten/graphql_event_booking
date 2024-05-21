@@ -9,7 +9,10 @@ export const Modal = ({ open, close, children }) => {
   return createPortal(
     <>
         <div className='modal'>
-            <div className="modal-content">{children}</div>
+            <div className="modal-content">
+                {children}
+                <h2>Bingo Chicken!</h2>
+            </div>
             <button onClick={ () => close(false) }>Close</button>
         </div>
     </>, document.getElementById('overlay')

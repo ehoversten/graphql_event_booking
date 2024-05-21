@@ -86,8 +86,9 @@ const resolvers = {
 
             try {
                 const allBookings = await Booking.find()
-                                                .populate('userId')
-                                                .populate('eventId');
+                                                .populate({ path: 'userId', populate: { path: 'events_attending', populate: { path: 'eventId' } } })
+                                                .populate({ path: 'eventId', populate: { path: 'to_attend' } /*, populate: { path: 'creator' } */ })
+                                                // .populate({ path: 'eventId', populate: { path: 'creator' }, populate: { path: 'to_attend' } })
                 console.log("Found: ", allBookings);
                 return allBookings;
             } catch (error) {
@@ -99,7 +100,8 @@ const resolvers = {
             try {
                 const booking = await Booking.findById(_id)
                                             .populate('userId')
-                                            .populate('eventId');
+                                            .populate('eventId')
+                                            // .populate('to_attend')
                 return booking;
             } catch (error) {
                 return { msg: "Error", err: error };
@@ -343,6 +345,7 @@ const resolvers = {
             // Delete Booking
 
             try {
+                // Find the current booking 
                 const foundBooking = await Booking.findById(eventId)
                                                     .populate('userId')
                                                     .populate('eventId');
@@ -350,22 +353,27 @@ const resolvers = {
                 if(!foundBooking) {
                     throw new GraphQLError('No Booking Found')
                 }
-
+                
+                console.log("Event to update: ", foundBooking.eventId._id)
+                // Update Booking Associated with EVENT
                 const updatedEvent = await Event.findByIdAndUpdate(
-                    { _id: eventId },
-                    { $pull: { to_attend: foundBooking.userId._id } },
+                    { _id: foundBooking.eventId._id },
+                    // { $pull: { to_attend: foundBooking.userId._id } },
+                    { $pull: { to_attend: { where: { _id: foundBooking.userId._id } } } },
                     { $set: { isBooked: false } },
                     { new: true }
                 )
                 console.log("Updated Event: ", updatedEvent);
-                
+                    
+                // Update Booking Associated with USER
                 const updatedUser = await User.findByIdAndUpdate(
                     { _id: foundBooking.userId._id },
-                    { $pull: { events_attending: foundBooking.eventId._id } },
+                    // { $pull: { events_attending: foundBooking.eventId._id } },
+                    { $pull: { events_attending: { where: { _id: foundBooking.eventId._id } } } },
                     { new: true }
                 )
                 console.log("Updated User: ", updatedUser);
-
+                // Finally REMOVE Booking record from database
                 await Booking.findByIdAndDelete(eventId);
                 console.log("Booking cancelled");
                 return { msg: "Booking cancelled", err: null }
@@ -373,7 +381,7 @@ const resolvers = {
                 // return { msg: "Booking cancelled", err: error }
             } catch (error) {
                 console.log("Cancelling Error: ", error);
-                return { msg: "Booking cancelled", err: error }
+                return { msg: "Booking Error", err: error }
             }
         },
         // -- AUTHORIZATION MUTATIONS -- //

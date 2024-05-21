@@ -50,7 +50,13 @@ function EventDetail({ current, isLoggedIn, removeEvent, newBooking }) {
             <>
             <div className="btn-container flex flex-row justify-evenly">
               <button className="delete-event flex w-full justify-center rounded-md bg-orange-400 px-3 py-1.5 text-sm font-semibold leading-6 text-slate-800 shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 mt-5 mr-5" onClick={() => handleDelete(current._id)} value={current._id}>Delete</button>
-              <button className="book-event flex w-full justify-center rounded-md bg-orange-400 px-3 py-1.5 text-sm font-semibold leading-6 text-slate-800 shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 mt-5" onClick={() => bookEvent(current._id)} value={current._id}>Book This!</button>
+              { current.isBooked ? (
+                <button className="book-event flex w-full justify-center rounded-md bg-orange-400 px-3 py-1.5 text-sm font-semibold leading-6 text-slate-800 shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 mt-5" onClick={() => bookEvent(current._id)} value={current._id} disabled>EVENT BOOKED</button>
+              ) : (
+                <>
+                  <button className="book-event flex w-full justify-center rounded-md bg-orange-400 px-3 py-1.5 text-sm font-semibold leading-6 text-slate-800 shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 mt-5" onClick={() => bookEvent(current._id)} value={current._id}>Book This!</button>
+                </>
+              )}
             </div>
             </>
           ) : "" }
