@@ -1,4 +1,5 @@
 const { users, events } = require('../models/tempData');
+const { Schema } = require('mongoose');
 const { User, Event, Booking } = require('../models/index');
 const { GraphQLError } = require('graphql');
 const jwt = require('jsonwebtoken');
@@ -347,29 +348,41 @@ const resolvers = {
             try {
                 // Find the current booking 
                 const foundBooking = await Booking.findById(eventId)
-                                                    .populate('userId')
-                                                    .populate('eventId');
+                                                    // .populate('userId')
+                                                    // .populate('eventId');
+                                                    // .populate({ path: 'userId', populate: { path: 'events_attending', populate: { path: 'eventId' } } })
+                                                    .populate({ path: 'userId', populate: { path: 'events_attending' /*, populate: { path: 'eventId' } */ } } )
+                                                    .populate({ path: 'eventId', populate: { path: 'to_attend' } /*, populate: { path: 'creator' } */ })
                 console.log("Booking to delete: ", foundBooking)
                 if(!foundBooking) {
                     throw new GraphQLError('No Booking Found')
                 }
                 
                 console.log("Event to update: ", foundBooking.eventId._id)
+                console.log("User to update: ", foundBooking.userId._id)
                 // Update Booking Associated with EVENT
-                const updatedEvent = await Event.findByIdAndUpdate(
+             //   const updatedEvent = await Event.findByIdAndUpdate(
+                const updatedEvent = await Event.findOneAndUpdate(
                     { _id: foundBooking.eventId._id },
-                    // { $pull: { to_attend: foundBooking.userId._id } },
-                    { $pull: { to_attend: { where: { _id: foundBooking.userId._id } } } },
-                    { $set: { isBooked: false } },
+                    // { $pull: { to_attend: [foundBooking.userId._id] } },
+                    // { $pullAll: { to_attend: [{ _id: foundBooking.userId._id }] } },
+                    // { $pull: { to_attend: { _id: foundBooking.userId._id } } },
+                    { 
+                        $pull: { to_attend: { $in: [foundBooking.userId._id] } }, 
+                        $set: { isBooked: false }
+                    },
                     { new: true }
                 )
                 console.log("Updated Event: ", updatedEvent);
                     
                 // Update Booking Associated with USER
-                const updatedUser = await User.findByIdAndUpdate(
+                // const updatedUser = await User.findByIdAndUpdate(
+                const updatedUser = await User.findOneAndUpdate(
                     { _id: foundBooking.userId._id },
-                    // { $pull: { events_attending: foundBooking.eventId._id } },
-                    { $pull: { events_attending: { where: { _id: foundBooking.eventId._id } } } },
+                    // { $pull: { events_attending: Schema.Types.ObjectId(foundBooking.eventId._id) } },
+                    // { $pullAll: { events_attending: [foundBooking.eventId._id] } },
+                    // { $pull: { events_attending: { property: foundBooking.eventId._id } } },
+                    { $pull: { events_attending: { $in: [foundBooking.eventId._id] } } },
                     { new: true }
                 )
                 console.log("Updated User: ", updatedUser);

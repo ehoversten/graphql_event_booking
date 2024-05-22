@@ -15,7 +15,7 @@ function Bookings() {
   const [cancelBooking] = useMutation(CANCEL_BOOKING, {
     refetchQueries: [
       GET_BOOKINGS,
-      'CancelBooking'
+      'cancelBooking'
     ]
   });
 
