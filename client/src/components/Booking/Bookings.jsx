@@ -34,7 +34,13 @@ function Bookings() {
   if(loading) return (<h2>LOADING...</h2>);
 
   const bookings = data?.bookings || [];
+  const myBookings = data?.bookings.filter(elem => { 
+                                    if(elem.userId._id == auth.user?.data._id) { 
+                                      return elem 
+                                    } 
+                                  }) || [];
   console.log("Bookings: ", bookings);
+  console.log("MY Bookings: ", myBookings);
 
   const handleCancel = async (id) => {
     console.log("Booking ID: ", id);
@@ -47,19 +53,21 @@ function Bookings() {
 
   return (
     <div className='booking-list-container '>
-        { bookings.length == 0 ? <h2>No Current Bookings</h2> :
+        {/* { bookings.length == 0 ? <h2>No Current Bookings</h2> : */}
+        { myBookings.length == 0 ? <h2>No Current Bookings</h2> :
         <div className="booking-list bg-sky-800 divide-y divide-slate-700 mx-auto mt-5">
           <h2>Current Bookings</h2>
-          { bookings.map(event => (
+          {/* { bookings.map(event => ( */}
+          { myBookings.map(event => (
             <div className="booking-card p-5 flex justify-between" key={event._id}>
-               <div className="sm:mx-auto sm:w-1/5 sm:max-w-sm mr-5 flex-column content-center rounded-full bg-sky-900">
-            <img
-              className="mx-auto h-10 w-auto align-middle"
-              src="https://tailwindui.com/img/logos/mark.svg?color=orange&shade=600"
-              alt="Your Company"
-            />
-          </div>
-          <div className="booking-info text-left flex-1">
+              <div className="sm:mx-auto sm:w-1/5 sm:max-w-sm mr-5 flex-column content-center rounded-full bg-sky-900">
+                  <img
+                    className="mx-auto h-10 w-auto align-middle"
+                    src="https://tailwindui.com/img/logos/mark.svg?color=orange&shade=600"
+                    alt="Your Company"
+                  />
+              </div>
+            <div className="booking-info text-left flex-1">
               {/* <h2 className="booking-title mb-4">{event._id}</h2> */}
               { event.eventId ? (
                 <>
@@ -69,10 +77,10 @@ function Bookings() {
                   <h2 className="booking-time mb-4">Created By: {event.userId.username.toUpperCase()}</h2>
                 </>
 
-              ) : null}
+              ) : null }
               <button className="cancel-booking mb-4" onClick={() => handleCancel(event._id)}>Cancel Booking</button>
-          </div>
             </div>
+          </div>
           ))}
         </div>
         }

@@ -42,7 +42,7 @@ function Login() {
       const { data } = await login({
         variables: { loginInput: loginInput }
       });
-      console.log("Login Data: ", data);
+      // console.log("Login Data: ", data);
 
       if(data.login.token) {
         // localStorage.setItem('id_token', data.login.token);

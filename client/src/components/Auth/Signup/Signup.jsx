@@ -40,9 +40,9 @@ function Signup() {
     event.preventDefault();
     console.log("Submitting ");
 
-    console.log("Username: ", userInputRef.current.value);
-    console.log("Email: ", emailInputRef.current.value);
-    console.log("Password: ", passInputRef.current.value);
+    // console.log("Username: ", userInputRef.current.value);
+    // console.log("Email: ", emailInputRef.current.value);
+    // console.log("Password: ", passInputRef.current.value);
 
     // let userInput = {
     //   username: userFormData.username,
@@ -59,7 +59,7 @@ function Signup() {
       const { data } = await register({
         variables: { userInput: userInput }
       });
-      console.log("New User: ", data);
+      // console.log("New User: ", data);
       if(data.register.token) {
         // localStorage.setItem('id_token', JSON.stringify(data.register.token))
         auth.login(data.register)

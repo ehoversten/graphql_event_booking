@@ -14,7 +14,7 @@ function EventsContainer() {
   // GET CURRENT USERS EVENTS
   // if token --> query GET_USERS_EVENTS($userId)
 
-  
+
   // GET ALL EVENTS 
   const {error, loading, data } = useQuery(GET_EVENTS);
   const [addNewEvent, addEventData] = useMutation(ADD_EVENT, {
@@ -31,7 +31,12 @@ function EventsContainer() {
     ]
   });
 
-  const [newBooking, bookingData] = useMutation(ADD_BOOKING);
+  const [newBooking, bookingData] = useMutation(ADD_BOOKING, {
+    refetchQueries: [
+      GET_EVENTS,
+      'Events'
+    ]
+  });
   
   if(loading) return (<h2>LOADING...</h2>)
   if(error) return (<h2>ERROR...</h2>)
