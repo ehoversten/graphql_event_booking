@@ -47,13 +47,15 @@ function Navigation() {
             <Link to='/events' className='font-bold'>Events</Link>
           </div>
 
-          <div className="link-row p-3">
-            <Link to='/bookings' className='font-bold'>Bookings</Link>
-          </div>
           { auth.user ? (
-            <div className="link-row p-3">
-              <a onClick={handleLogout} className='logout-btn font-bold'>Logout</a>
-            </div>
+            <>
+              <div className="link-row p-3">
+                <Link to='/bookings' className='font-bold'>Bookings</Link>
+              </div>
+              <div className="link-row p-3">
+                <a onClick={handleLogout} className='logout-btn font-bold'>Logout</a>
+              </div>
+            </>
           ) : (
             <>
               <div className="link-row p-3">

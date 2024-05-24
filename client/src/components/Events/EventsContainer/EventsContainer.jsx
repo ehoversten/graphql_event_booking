@@ -11,6 +11,11 @@ function EventsContainer() {
 
   const [currentEvent, setCurrentEvent] = useState(null);
 
+  // GET CURRENT USERS EVENTS
+  // if token --> query GET_USERS_EVENTS($userId)
+
+  
+  // GET ALL EVENTS 
   const {error, loading, data } = useQuery(GET_EVENTS);
   const [addNewEvent, addEventData] = useMutation(ADD_EVENT, {
     refetchQueries: [

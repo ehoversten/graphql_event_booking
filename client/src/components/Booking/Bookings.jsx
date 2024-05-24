@@ -11,6 +11,9 @@ function Bookings() {
   const auth = useContext(AuthContext);
   console.log("Auth: ", auth);
 
+  // GET CURRENT USERS BOOKINGS
+  // if token --> query GET_USERS_BOOKINGS($userId)
+
   const { error, loading, data } = useQuery(GET_BOOKINGS);
   const [cancelBooking] = useMutation(CANCEL_BOOKING, {
     refetchQueries: [
