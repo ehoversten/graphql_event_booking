@@ -1,4 +1,5 @@
 const { users, events } = require('../models/tempData');
+const { Schema } = require('mongoose');
 const { User, Event, Booking } = require('../models/index');
 const { GraphQLError } = require('graphql');
 const jwt = require('jsonwebtoken');
@@ -86,8 +87,9 @@ const resolvers = {
 
             try {
                 const allBookings = await Booking.find()
-                                                .populate('userId')
-                                                .populate('eventId');
+                                                .populate({ path: 'userId', populate: { path: 'events_attending', populate: { path: 'eventId' } } })
+                                                .populate({ path: 'eventId', populate: { path: 'to_attend' } /*, populate: { path: 'creator' } */ })
+                                                // .populate({ path: 'eventId', populate: { path: 'creator' }, populate: { path: 'to_attend' } })
                 console.log("Found: ", allBookings);
                 return allBookings;
             } catch (error) {
@@ -99,7 +101,8 @@ const resolvers = {
             try {
                 const booking = await Booking.findById(_id)
                                             .populate('userId')
-                                            .populate('eventId');
+                                            .populate('eventId')
+                                            // .populate('to_attend')
                 return booking;
             } catch (error) {
                 return { msg: "Error", err: error };
@@ -284,14 +287,14 @@ const resolvers = {
 
             try {
                 const checkEvent = await Event.findById(eventId);
-                console.log("Found Event: ", checkEvent);
+                // console.log("Found Event: ", checkEvent);
                 // validate 
                 if(checkEvent.isBooked || checkEvent.max_attendance == checkEvent.to_attend.length) {
                     throw new GraphQLError("Event is already booked!")
                 }
                 // Create Booking Instance
                 const newBooking = await Booking.create({ userId: userId, eventId: eventId });
-                console.log("New Booking: ", newBooking);
+                // console.log("New Booking: ", newBooking);
                 // -- Associate other Models -- //
                 // Update User --> events_attending
                 const updatedUser = await User.findByIdAndUpdate(
@@ -299,7 +302,7 @@ const resolvers = {
                     { $addToSet: { events_attending: newBooking._id }},
                     { new: true}
                 );
-                console.log("Updated User: ", updatedUser)
+                // console.log("Updated User: ", updatedUser)
 
                 // Update Event --> to_attend
                 let updatedEvent = await Event.findByIdAndUpdate(
@@ -315,7 +318,7 @@ const resolvers = {
                         { new: true }
                     )
                 }
-                console.log("Updated Event: ", updatedEvent);
+                // console.log("Updated Event: ", updatedEvent);
                     // --- OR --- (Q. Which is better methodology(?)) // 
                 
                 // Find Event by Id
@@ -334,7 +337,7 @@ const resolvers = {
             }
         },
         cancelBooking: async (parent, { eventId }, context) => {
-            console.log("Booking to Cancel: ", eventId);
+            // console.log("Booking to Cancel: ", eventId);
 
             // Check Booking -> does it exist(?)
             //      - update Event - isBooked --> FALSE
@@ -343,29 +346,47 @@ const resolvers = {
             // Delete Booking
 
             try {
+                // Find the current booking 
                 const foundBooking = await Booking.findById(eventId)
-                                                    .populate('userId')
-                                                    .populate('eventId');
-                console.log("Booking to delete: ", foundBooking)
+                                                    // .populate('userId')
+                                                    // .populate('eventId');
+                                                    .populate({ path: 'userId', populate: { path: 'events_attending', populate: { path: 'eventId' } } })
+                                                    // .populate({ path: 'userId', populate: { path: 'events_attending' /*, populate: { path: 'eventId' } */ } } )
+                                                    .populate({ path: 'eventId', populate: { path: 'to_attend' } /*, populate: { path: 'creator' } */ })
+                // console.log("Booking to delete: ", foundBooking)
                 if(!foundBooking) {
                     throw new GraphQLError('No Booking Found')
                 }
-
-                const updatedEvent = await Event.findByIdAndUpdate(
-                    { _id: eventId },
-                    { $pull: { to_attend: foundBooking.userId._id } },
-                    { $set: { isBooked: false } },
-                    { new: true }
-                )
-                console.log("Updated Event: ", updatedEvent);
                 
-                const updatedUser = await User.findByIdAndUpdate(
-                    { _id: foundBooking.userId._id },
-                    { $pull: { events_attending: foundBooking.eventId._id } },
+                // console.log("Event to update: ", foundBooking.eventId._id)
+                // console.log("User to update: ", foundBooking.userId._id)
+                // Update Booking Associated with EVENT
+             //   const updatedEvent = await Event.findByIdAndUpdate(
+                const updatedEvent = await Event.findOneAndUpdate(
+                    { _id: foundBooking.eventId._id },
+                    // { $pull: { to_attend: [foundBooking.userId._id] } },
+                    // { $pullAll: { to_attend: [{ _id: foundBooking.userId._id }] } },
+                    // { $pull: { to_attend: { _id: foundBooking.userId._id } } },
+                    { 
+                        $pull: { to_attend: { $in: [foundBooking.userId._id] } }, 
+                        $set: { isBooked: false }
+                    },
                     { new: true }
                 )
-                console.log("Updated User: ", updatedUser);
-
+                // console.log("Updated Event: ", updatedEvent);
+                    
+                // Update Booking Associated with USER
+                // const updatedUser = await User.findByIdAndUpdate(
+                const updatedUser = await User.findOneAndUpdate(
+                    { _id: foundBooking.userId._id },
+                    // { $pull: { events_attending: Schema.Types.ObjectId(foundBooking.eventId._id) } },
+                    { $pull: { events_attending: eventId } },
+                    // { $pull: { events_attending: { property: foundBooking.eventId._id } } },
+                    // { $pull: { events_attending: { $in: [foundBooking.eventId._id] } } },
+                    { new: true }
+                )
+                // console.log("Updated User: ", updatedUser);
+                // Finally REMOVE Booking record from database
                 await Booking.findByIdAndDelete(eventId);
                 console.log("Booking cancelled");
                 return { msg: "Booking cancelled", err: null }
@@ -373,7 +394,7 @@ const resolvers = {
                 // return { msg: "Booking cancelled", err: error }
             } catch (error) {
                 console.log("Cancelling Error: ", error);
-                return { msg: "Booking cancelled", err: error }
+                return { msg: "Booking Error", err: error }
             }
         },
         // -- AUTHORIZATION MUTATIONS -- //

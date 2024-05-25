@@ -1,0 +1,9 @@
+.event-card-container {
+
+    max-height: 50vh;
+    border: 3px solid darkorange;
+    max-width: 500px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+
+}

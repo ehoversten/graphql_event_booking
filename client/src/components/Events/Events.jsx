@@ -1,6 +1,7 @@
 import React from 'react'
+import './events.css'
 
-function Events({ events, removeEvent, newBooking }) {
+function Events({ events, removeEvent, newBooking, setChoice }) {
 
   const handleDelete = async (_id) => {
     console.log("ID: ", _id);
@@ -23,19 +24,22 @@ function Events({ events, removeEvent, newBooking }) {
   }
 
   return (
-    <div className='list-container'>
+    <div className='event-card-container bg-sky-800 divide-y divide-slate-700 mx-auto mt-5'>
       { events.length == 0 ? <h3>No Current Events</h3> :
         events?.length && events?.map(event => (
-        <div className="event-card" key={event._id}>
-          <h3 className="event-title">Title: {event.title}</h3>
-          <p className="event-desc">Desc: {event.description}</p>
-          <p className="event-price">Price: {event.price}</p>
-          <h4 className="event-date">Date: {event.date}</h4>
-          <h4 className="event-time">Time: {event.time}</h4>
-          <p className="event-attendees">Number of Attendees: {event.max_attendance}</p>
-          <p className="event-creator">Created By: {event.creator.username}</p>
-          <button className="delete-event" onClick={() => handleDelete(event._id)} value={event._id}>Delete</button>
-          <button className="book-event" onClick={() => bookEvent(event._id)} value={event._id}>Book This!</button>
+        <div className="event-card p-5 flex justify-between" key={event._id} onClick={() => setChoice(event)}>
+          <div className="sm:mx-auto sm:w-1/5 sm:max-w-sm mr-5 flex-column content-center rounded-full bg-sky-900">
+            <img
+              className="mx-auto h-10 w-auto align-middle"
+              src="https://tailwindui.com/img/logos/mark.svg?color=orange&shade=600"
+              alt="Your Company"
+            />
+          </div>
+          <div className="event-info text-left flex-1">
+            <h3 className="event-title mb-4"><span className='font-bold'>Event: </span> {event.title}</h3>
+            <h4 className="event-date inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><span className='font-bold'>Date: </span> {event.date}</h4>
+            <h4 className="event-time inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><span className='font-bold'>Time: </span> {event.time}</h4>
+          </div>
         </div>
       ))}
     </div>

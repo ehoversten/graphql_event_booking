@@ -79,14 +79,29 @@ export const GET_BOOKINGS = gql`
         bookings {
             _id
             userId {
+                _id
                 username
                 email
+                events_attending {
+                    _id
+                    eventId {
+                        title
+                    }
+                }
             }
             eventId {
+                _id
                 title
                 description
                 date
                 time
+                # creator {
+                #     username
+                # }
+                to_attend {
+                    _id
+                    username
+                }
             }
         }
     }
