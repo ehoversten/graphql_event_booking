@@ -4,6 +4,7 @@ import { GET_BOOKINGS } from '../../utils/queries'
 import { CANCEL_BOOKING } from '../../utils/mutations';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
+import { BookingContext } from '../../context/bookingContext';
 
 function Bookings() {
 
@@ -46,6 +47,7 @@ function Bookings() {
     console.log("Booking ID: ", id);
     try {
       await cancelBooking({ variables: { eventId: id}});
+      
     } catch (error) {
       console.log("Error: ", error);
     } 
