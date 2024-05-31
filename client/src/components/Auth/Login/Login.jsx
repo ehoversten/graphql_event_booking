@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
 import { LOGIN } from '../../../utils/mutations'
@@ -19,6 +19,10 @@ function Login() {
   const [login, {error, loading}] = useMutation(LOGIN, {
     variables: { loginInput: loginFormData }
   })
+
+  useEffect(() => {
+    console.log("Auth State: ", auth);
+  }, [auth])
 
   if(loading) return (<h2>LOADING...</h2>)
   if(error) return (<h2>Error: ${error}</h2>)
