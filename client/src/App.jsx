@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { AuthProvider } from './context/authContext';
+import { EventProvider } from './context/eventContext';
 import Dashboard from './components/Dashboard/Dashboard';
 import Navigation from './components/Navigation/Navigation';
 import Login from './components/Auth/Login/Login';
@@ -44,25 +45,29 @@ function App() {
 
   return (
     <AuthProvider>
-      <ApolloProvider client={client}>
-        <BrowserRouter>
-          <Navigation />
-          <Routes>
-            <Route path='/' element={<Landing />}>
-              <Route path='events' element={<EventsContainer />}/> 
-            </Route>
-            <Route path='login' element={<Login />}/>
-            <Route path='signup' element={<Signup />}/>
-            <Route path='dashboard' element={<Dashboard />}>
-              <Route path='events' element={<EventsContainer />}/> 
-            </Route>
-            <Route path='bookings' element={<Bookings />} />
-          </Routes>
-          <button onClick={ () => setOpenModal(true)}>Open Modal</button>
-          { openModal && <Modal open={openModal} close={setOpenModal}/> }
-          <Modal />
-        </BrowserRouter>
-      </ApolloProvider>
+      <EventProvider>
+
+        <ApolloProvider client={client}>
+          <BrowserRouter>
+            <Navigation />
+            <Routes>
+              <Route path='/' element={<Landing />}>
+                <Route path='events' element={<EventsContainer />}/> 
+              </Route>
+              <Route path='login' element={<Login />}/>
+              <Route path='signup' element={<Signup />}/>
+              <Route path='dashboard' element={<Dashboard />}>
+                <Route path='events' element={<EventsContainer />}/> 
+              </Route>
+              <Route path='bookings' element={<Bookings />} />
+            </Routes>
+            <button onClick={ () => setOpenModal(true)}>Open Modal</button>
+            { openModal && <Modal open={openModal} close={setOpenModal}/> }
+            <Modal />
+          </BrowserRouter>
+        </ApolloProvider>
+        
+      </EventProvider>
     </AuthProvider>
   )
   // return (

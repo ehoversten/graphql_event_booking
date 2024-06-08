@@ -1,4 +1,6 @@
 import { useState, createContext, useReducer } from 'react';
+import { ADD_EVENT } from '../utils/mutations';
+import { useMutation } from '@apollo/client';
 
 const initialState = {
     events: null,
@@ -7,8 +9,23 @@ const initialState = {
 
 export const EventContext = createContext(initialState);
 
+  // GET ALL EVENTS 
+//   const {error, loading, data } = useQuery(GET_EVENTS);
+
+// const [addNewEvent, addEventData] = useMutation(ADD_EVENT, {
+    // refetchQueries: [
+    //   GET_EVENTS,
+    //   'Events'
+    // ]
+// });
+
 const eventReducer = (state, action) => {
     switch(action.type) {
+        case 'UPDATE_EVENTS':
+            return {
+                ...state,
+                events: [...action.payload]
+            }
         case 'ADD':
             return {
                 ...state,
@@ -43,6 +60,7 @@ export const EventProvider = (props) => {
 
     const newEvent = (event) => {
         console.log("Event Data: ", event);
+
 
         dispatch({
             type: 'ADD',

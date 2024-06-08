@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { createPortal } from 'react-dom';
+import { ADD_EVENT } from '../../utils/mutations';
+import { useMutation } from '@apollo/client';
 import './Modal.css';
 
 export const Modal = ({ open, close, children }) => {
@@ -13,6 +15,13 @@ export const Modal = ({ open, close, children }) => {
     date: '',
     time: '',
     max_attendance: 1
+  });
+
+  const [addNewEvent] = useMutation(ADD_EVENT, {
+    // refetchQueries: [
+    //   GET_EVENTS,
+    //   'Events'
+    // ]
   });
 
   const handleChange = (event) => {
@@ -35,9 +44,9 @@ export const Modal = ({ open, close, children }) => {
     }
     console.log("Event Submitting: ", eventInput);
 
-    // const { data } = await addNewEvent({
-    //     variables: { eventInput: eventInput }
-    // })
+    const { data } = await addNewEvent({
+        variables: { eventInput: eventInput }
+    })
     // console.log("New Evt: ", data);
 
     setEventForm({
@@ -70,74 +79,74 @@ export const Modal = ({ open, close, children }) => {
                 </div>
                 <form id='event-form' onSubmit={handleSubmit} className='text-left'>
                     <div className="form-control mt-2 ">
-                        <label htmlFor="title">Title: </label>
-                        <input 
-                            type='text' 
-                            name='title'
-                            id='title'
-                            value={eventForm.title}
-                            onChange={handleChange}
-                            className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
-                            />
+                      <label htmlFor="title">Title: </label>
+                      <input 
+                          type='text' 
+                          name='title'
+                          id='title'
+                          value={eventForm.title}
+                          onChange={handleChange}
+                          className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
+                          />
                     </div>
                     <div className="form-control mt-2">
-                        <label htmlFor="description">Description: </label>
-                        <input 
-                            type="textbox" 
-                            name='description'
-                            id="description"
-                            value={eventForm.description}
-                            onChange={handleChange}
-                            className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
-                            />
+                      <label htmlFor="description">Description: </label>
+                      <input 
+                          type="textbox" 
+                          name='description'
+                          id="description"
+                          value={eventForm.description}
+                          onChange={handleChange}
+                          className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
+                          />
                     </div>
 
                     <div className="form-control-container flex flex-wrap gap-3">
 
-                        <div className="form-control mt-2 flex-1">
-                            <label htmlFor="price">Price: <span>(optional) </span></label>
-                            <input 
-                                type='number' 
-                                name='price'
-                                id='price'
-                                value={eventForm.price}
-                                onChange={handleChange}
-                                className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
-                                />
-                        </div>
-                        <div className="form-control mt-2 flex-1">
-                            <label htmlFor="date">Date: </label>
-                            <input 
-                                type='date' 
-                                name='date'
-                                id='date'
-                                value={eventForm.date}
-                                onChange={handleChange}
-                                className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
-                                />
-                        </div>
-                        <div className="form-control mt-2 flex-1">
-                            <label htmlFor="time">Time of Event: </label>
-                            <input 
-                                type='time' 
-                                name='time'
-                                id='time'
-                                value={eventForm.time}
-                                onChange={handleChange}
-                                className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
-                                />
-                        </div>
-                        <div className="form-control mt-2 flex-1">
-                            <label htmlFor="max_attendance">Max Attendees: </label>
-                            <input 
-                                type='number' 
-                                name='max_attendance'
-                                id='max_attendance'
-                                value={eventForm.max_attendance}
-                                onChange={handleChange}
-                                className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
-                                />
-                        </div>
+                    <div className="form-control mt-2 flex-1">
+                      <label htmlFor="price">Price: <span>(optional) </span></label>
+                      <input 
+                          type='number' 
+                          name='price'
+                          id='price'
+                          value={eventForm.price}
+                          onChange={handleChange}
+                          className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
+                          />
+                    </div>
+                    <div className="form-control mt-2 flex-1">
+                      <label htmlFor="date">Date: </label>
+                      <input 
+                          type='date' 
+                          name='date'
+                          id='date'
+                          value={eventForm.date}
+                          onChange={handleChange}
+                          className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
+                          />
+                    </div>
+                    <div className="form-control mt-2 flex-1">
+                      <label htmlFor="time">Time of Event: </label>
+                      <input 
+                          type='time' 
+                          name='time'
+                          id='time'
+                          value={eventForm.time}
+                          onChange={handleChange}
+                          className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
+                          />
+                    </div>
+                    <div className="form-control mt-2 flex-1">
+                      <label htmlFor="max_attendance">Max Attendees: </label>
+                      <input 
+                          type='number' 
+                          name='max_attendance'
+                          id='max_attendance'
+                          value={eventForm.max_attendance}
+                          onChange={handleChange}
+                          className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
+                          />
+                    </div>
 
                     </div>
 
