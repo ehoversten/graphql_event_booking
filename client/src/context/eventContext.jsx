@@ -58,6 +58,8 @@ export const EventProvider = (props) => {
 
     // -- What Actions/Events do we need to account for(?) -- //
 
+
+
     const newEvent = (event) => {
         console.log("Event Data: ", event);
 
@@ -87,7 +89,8 @@ export const EventProvider = (props) => {
     }
 
     return (
-        <EventContext.Provider value={{ events: state.events, currentEvent: state.currentEvent, newEvent, deleteEvent, selectEvent}}>
+        // <EventContext.Provider value={{ events: state.events, currentEvent: state.currentEvent, newEvent, deleteEvent, selectEvent}}>
+        <EventContext.Provider value={[state, dispatch]}>
             {props.children}
         </EventContext.Provider>
     )

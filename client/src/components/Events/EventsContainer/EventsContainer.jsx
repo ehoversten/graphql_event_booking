@@ -12,8 +12,8 @@ function EventsContainer() {
 
   // const [currentEvent, setCurrentEvent] = useState(null);
 
-  const { events, currentEvent } = useContext(EventContext);
-  // const [state, dispatch] = useContext(EventContext);
+  // const { events, currentEvent } = useContext(EventContext);
+  const [state, dispatch] = useContext(EventContext);
 
   // GET CURRENT USERS EVENTS
   // if token --> query GET_USERS_EVENTS($userId)
@@ -43,14 +43,14 @@ function EventsContainer() {
     ]
   });
 
-  // useEffect(() => {
-  //   if(data) {
-  //     dispatch({
-  //       type: 'UPDATE_EVENTS',
-  //       events: data.events
-  //     })
-  //   }
-  // }, [data, loading, dispatch])
+  useEffect(() => {
+    if(data) {
+      dispatch({
+        type: 'UPDATE_EVENTS',
+        payload: data.events
+      })
+    }
+  }, [data, loading, dispatch])
   
   if(loading) return (<h2>LOADING...</h2>)
   if(error) return (<h2>ERROR...</h2>)
@@ -62,18 +62,19 @@ function EventsContainer() {
 
     // setCurrentEvent(choice);
     // dispatch fn()
-    // dispatch({
-    //   type: 'SELECT',
-    //   currentEvent: choice
-    // })
+    dispatch({
+      type: 'SELECT',
+      payload: choice
+    })
   }
 
   return (
     <>
         <div className='container mx-auto my-5 bg-sky-900 p-5 md:flex md:w-full'>
-          { currentEvent && (
+          { state?.currentEvent && (
+          // { currentEvent && (
             <EventDetail 
-              current={currentEvent} 
+              current={state.currentEvent} 
               isLoggedIn={token}
               removeEvent={removeEvent} 
               newBooking={newBooking}
