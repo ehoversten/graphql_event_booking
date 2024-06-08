@@ -54,8 +54,7 @@ function EventsContainer() {
   
   if(loading) return (<h2>LOADING...</h2>)
   if(error) return (<h2>ERROR...</h2>)
-  // const events = data?.events || [];
-  const eventsArr = data?.events || [];
+  const events = data?.events || [];
 
   const handleChoice = (choice) => {
     console.log("Chosen: ", choice);
@@ -85,7 +84,7 @@ function EventsContainer() {
           )}
           <Events 
             // events={events} 
-            events={eventsArr} 
+            events={state.events} 
             setChoice={handleChoice}
           />
         </div>

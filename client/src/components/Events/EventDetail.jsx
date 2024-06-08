@@ -1,15 +1,23 @@
-import React, { useContext} from 'react'
+import React, { useContext } from 'react'
 import { AuthContext } from '../../context/authContext';
+import { EventContext } from '../../context/eventContext';
 
 function EventDetail({ current, isLoggedIn, removeEvent, newBooking }) {
 
   const auth = useContext(AuthContext);
+  const [state, dispatch] = useContext(EventContext);
+
 
   const handleDelete = async (_id) => {
     console.log("ID: ", _id);
     try {
       const { data } = await removeEvent({ variables: { id: _id }})
-      // console.log("Query Data: ", data)
+      console.log("Query Data: ", data)
+
+      dispatch({
+        type: 'REMOVE',
+        payload: _id
+      });
     } catch (error) {
       console.log("Error: ", error)
     }

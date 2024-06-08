@@ -3,7 +3,7 @@ import { ADD_EVENT } from '../utils/mutations';
 import { useMutation } from '@apollo/client';
 
 const initialState = {
-    events: null,
+    events: [],
     currentEvent: null
 }
 
@@ -32,9 +32,11 @@ const eventReducer = (state, action) => {
                 events: [...state, action.payload]
             }
         case 'REMOVE':
+            const newEvents = state.events.filter(event => event._id != action.payload)
             return {
                 ...state,
-                events: [...state].filter(event => event._id != action.payload)
+                events: newEvents,
+                currentEvent: null
             }
         case 'SELECT': 
             return {
@@ -49,10 +51,10 @@ const eventReducer = (state, action) => {
 
 // export const EventProvider = ({ children }) => {
 export const EventProvider = (props) => {
-    console.log("Children: ", props.children);
+    // console.log("Children: ", props.children);
 
-    const [events, setEvents] = useState([])
-    const [current, setCurrent] = useState({})
+    // const [events, setEvents] = useState([])
+    // const [current, setCurrent] = useState({})
 
     const [state, dispatch] = useReducer(eventReducer, initialState);
 

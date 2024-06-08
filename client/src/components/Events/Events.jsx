@@ -3,6 +3,7 @@ import './events.css'
 
 function Events({ events, removeEvent, newBooking, setChoice }) {
 
+  // -> remove (being handled in parent component)
   const handleDelete = async (_id) => {
     console.log("ID: ", _id);
     try {
@@ -13,6 +14,7 @@ function Events({ events, removeEvent, newBooking, setChoice }) {
     }
   }
   
+  // -> remove (being handled in parent component)
   const bookEvent = async (_id) => {
     console.log("ID: ", _id);
     try {
