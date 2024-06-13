@@ -7,7 +7,6 @@ function EventDetail({ current, isLoggedIn, removeEvent, newBooking }) {
   const auth = useContext(AuthContext);
   const [state, dispatch] = useContext(EventContext);
 
-
   const handleDelete = async (_id) => {
     console.log("ID: ", _id);
     try {
@@ -27,6 +26,11 @@ function EventDetail({ current, isLoggedIn, removeEvent, newBooking }) {
     console.log("ID: ", _id);
     try {
       await newBooking({ variables: { eventId: _id }})
+
+      dispatch({
+        type: 'BOOK_EVENT',
+        payload: _id
+      });
     } catch (error) {
 
       console.log("Error: ", error)

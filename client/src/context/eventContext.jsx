@@ -79,7 +79,6 @@ export const EventProvider = (props) => {
     const newEvent = (event) => {
         console.log("Event Data: ", event);
 
-
         dispatch({
             type: 'ADD',
             payload: event._id
