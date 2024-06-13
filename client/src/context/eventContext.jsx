@@ -4,7 +4,9 @@ import { useMutation } from '@apollo/client';
 
 const initialState = {
     events: [],
-    currentEvent: null
+    currentEvent: null,
+    bookings: [],
+    currentBooking: null
 }
 
 export const EventContext = createContext(initialState);
@@ -26,23 +28,38 @@ const eventReducer = (state, action) => {
                 ...state,
                 events: [...action.payload]
             }
-        case 'ADD':
-            return {
-                ...state,
-                events: [...state, action.payload]
-            }
-        case 'REMOVE':
-            const newEvents = state.events.filter(event => event._id != action.payload)
-            return {
-                ...state,
-                events: newEvents,
-                currentEvent: null
-            }
-        case 'SELECT': 
-            return {
-                ...state,
-                currentEvent: action.payload
-            }
+            case 'ADD':
+                return {
+                    ...state,
+                    events: [...state, action.payload]
+                }
+            case 'REMOVE':
+                const newEvents = state.events.filter(event => event._id != action.payload)
+                return {
+                    ...state,
+                    events: newEvents,
+                    currentEvent: null
+                }
+            case 'SELECT': 
+                return {
+                    ...state,
+                    currentEvent: action.payload
+                }
+            case 'UPDATE_BOOKINGS':
+                return {
+                    ...state,
+                    bookings: [...action.payload]
+                }
+            case 'BOOK_EVENT':
+                return {
+                    ...state,
+                    bookings: [...state, action.payload]
+                }
+            case 'CANCEL':
+                return {
+                    ...state,
+                    bookings: state.bookings.filter(booking => booking._id != action.payload)
+                }
         default: 
             return state;
     }
@@ -59,9 +76,6 @@ export const EventProvider = (props) => {
     const [state, dispatch] = useReducer(eventReducer, initialState);
 
     // -- What Actions/Events do we need to account for(?) -- //
-
-
-
     const newEvent = (event) => {
         console.log("Event Data: ", event);
 
