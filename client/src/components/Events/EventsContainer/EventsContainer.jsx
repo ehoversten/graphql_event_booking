@@ -79,9 +79,9 @@ function EventsContainer() {
               newBooking={newBooking}
             />
           )}
-          { token && (
+          {/* { token && (
             <EventForm addNewEvent={addNewEvent}/>
-          )}
+          )} */}
           <Events 
             // events={events} 
             events={state.events} 
