@@ -10,7 +10,8 @@ function Login() {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
 
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState } = useForm();
+  const { errors } = formState;
 
   // const [loginFormData, setLoginFormData] = useState({
   //   email: '',
@@ -91,8 +92,14 @@ function Login() {
             // value={email}
             // onChange={(e) => setEmail(e.target.value)}
             className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6"
-            {...register("email")}
+            {...register("email", { 
+              required: {
+                value: true,
+                message: "Email is required"
+              }
+            })}
             />
+            <p className="form-error">{errors.email?.message}</p>
         </div>
         <div className="form-control mt-2">
           <label htmlFor="password" className="block text-sm font-medium leading-6 text-slate-300 mb-1">Password</label>
@@ -103,8 +110,14 @@ function Login() {
             // value={password}
             // onChange={(e) => setPassword(e.target.value)}
             className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6"
-            {...register("password")}
+            {...register("password", {
+              required: {
+                value: true,
+                message: "password cannot be empty"
+              }
+            })}
             />
+            <p className="form-error">{errors.password?.message}</p>
         </div>
         <button type="submit" className="flex w-full justify-center rounded-md bg-orange-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 mt-5">Submit</button>
       </form>

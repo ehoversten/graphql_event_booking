@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, createRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/client';
 import { REGISTER } from '../../../utils/mutations';
 import { GraphQLError } from 'graphql';
@@ -8,37 +9,39 @@ import { AuthContext } from '../../../context/authContext';
 function Signup() {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
-  const [userFormData, setUserFormData] = useState({
-    username: '',
-    email: '',
-    password: ''
-  });
+  const { register, handleSubmit } = useForm();
 
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // const [userFormData, setUserFormData] = useState({
+  //   username: '',
+  //   email: '',
+  //   password: ''
+  // });
 
-  const userInputRef = useRef('');
-  const emailInputRef = useRef('');
-  const passInputRef = useRef('');
+  // const [username, setUsername] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
 
-  useEffect( () => {
-    userInputRef.current?.focus();
-  }, []);
+  // const userInputRef = useRef('');
+  // const emailInputRef = useRef('');
+  // const passInputRef = useRef('');
 
-  const [register, { error, loading }] = useMutation(REGISTER);
+  // useEffect( () => {
+  //   userInputRef.current?.focus();
+  // }, []);
+
+  const [signup, { error, loading }] = useMutation(REGISTER);
 
   if(error) return (<h2>Error ${error}</h2>)
   if(loading) return (<h2>LOADING...</h2>)
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setUserFormData({ ...userFormData, [name]: value })
-  }
+  // const handleChange = (event) => {
+  //   const { name, value } = event.target;
+  //   setUserFormData({ ...userFormData, [name]: value })
+  // }
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    console.log("Submitting ");
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+  //   console.log("Submitting ");
 
     // console.log("Username: ", userInputRef.current.value);
     // console.log("Email: ", emailInputRef.current.value);
@@ -49,14 +52,19 @@ function Signup() {
     //   email: userFormData.email,
     //   password: userFormData.password
     // }
+
+  const onSubmit = async (formData) => {
+
+    console.log("Form Data: ", formData);
+
     let userInput = {
-      username: username,
-      email: email,
-      password: password
+      username: formData.username,
+      email: formData.email,
+      password: formData.password
     }
 
     try {
-      const { data } = await register({
+      const { data } = await signup({
         variables: { userInput: userInput }
       });
       // console.log("New User: ", data);
@@ -86,17 +94,21 @@ function Signup() {
         </div>
       <form 
         className='signup-form'
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         id='signup-form'>
         <div className="form-control mt-2">
           <label htmlFor="username" className="block text-sm font-medium leading-6 text-slate-300 mb-1">Enter Username</label>
           <input 
             type="text" 
-            name='username'
             id="username" 
-            ref={userInputRef}
-            value={username}
-            onChange={ (e) => setUsername(e.target.value)}
+            // name='username'
+            // ref={userInputRef}
+            // value={username}
+            // onChange={ (e) => setUsername(e.target.value)}
+            {...register("username", {
+              required: true,
+              messege: "Username is required"
+            })}
             className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6"
             />
         </div>
@@ -104,11 +116,15 @@ function Signup() {
           <label htmlFor="email" className="block text-sm font-medium leading-6 text-slate-300 mb-1">Enter Email</label>
           <input 
             type="email" 
-            name='email'
             id="email" 
-            ref={emailInputRef}
-            value={email}
-            onChange={ (e) => setEmail(e.target.value)}
+            // name='email'
+            // ref={emailInputRef}
+            // value={email}
+            // onChange={ (e) => setEmail(e.target.value)}
+            {...register("email", {
+              required: true,
+              messege: "email is required"
+            })}
             className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6"
             />
         </div>
@@ -116,11 +132,15 @@ function Signup() {
           <label htmlFor="password" className="block text-sm font-medium leading-6 text-slate-300 mb-1">Enter password</label>
           <input 
             type="password" 
-            name='password'
             id="password" 
-            ref={passInputRef}
-            value={password}
-            onChange={ (e) => setPassword(e.target.value)}
+            // name='password'
+            // ref={passInputRef}
+            // value={password}
+            // onChange={ (e) => setPassword(e.target.value)}
+            {...register("password", {
+              required: true,
+              messege: "password is required"
+            })}
             className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6"
             />
         </div>
