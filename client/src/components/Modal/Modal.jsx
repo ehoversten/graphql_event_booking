@@ -141,7 +141,7 @@ export const Modal = ({ open, close, children }) => {
                           // name='price'
                           // value={eventForm.price}
                           // onChange={handleChange}
-                          {...register("price", { })}
+                          {...register("price", { valueAsNumber: true })}
                           className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
                           />
                           <p className="form-error">{errors.price?.message}</p>
@@ -154,7 +154,13 @@ export const Modal = ({ open, close, children }) => {
                           // name='date'
                           // value={eventForm.date}
                           // onChange={handleChange}
-                          {...register("date", { })}
+                          {...register("date", { 
+                            valueAsDate: true,
+                            required: {
+                              value: true,
+                              message: "Date of event is required"
+                            }
+                           })}
                           className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
                           />
                           <p className="form-error">{errors.date?.message}</p>
@@ -167,7 +173,12 @@ export const Modal = ({ open, close, children }) => {
                           // name='time'
                           // value={eventForm.time}
                           // onChange={handleChange}
-                          {...register("time", { })}
+                          {...register("time", {
+                            required: {
+                              value: true,
+                              message: "time of event is required"
+                            }
+                           })}
                           className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
                           />
                     </div>
@@ -179,7 +190,7 @@ export const Modal = ({ open, close, children }) => {
                           // name='max_attendance'
                           // value={eventForm.max_attendance}
                           // onChange={handleChange}
-                          {...register("max_attendance", { })}
+                          {...register("max_attendance", { valueAsNumber: true })}
                           className='block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6'
                           />
                           <p className="form-error">{errors.max_attendance?.message}</p>

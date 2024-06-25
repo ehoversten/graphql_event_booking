@@ -14,6 +14,7 @@ import EventsContainer from './components/Events/EventsContainer/EventsContainer
 import Bookings from './components/Booking/Bookings';
 import Modal from './components/Modal/Modal';
 import './App.css';
+import ErrorBoundary from './components/Errors/ErrorBoundary';
 
 // Contstruct the GraphQL Endpoint '/graphql'
 const httpLink = createHttpLink({
@@ -41,12 +42,11 @@ const client = new ApolloClient({
 
 function App() {
 
-  const [openModal, setOpenModal] = useState(false);
+  // const [openModal, setOpenModal] = useState(false);
 
   return (
     <AuthProvider>
       <EventProvider>
-
         <ApolloProvider client={client}>
           <BrowserRouter>
             <Navigation />
@@ -61,12 +61,11 @@ function App() {
               </Route>
               <Route path='bookings' element={<Bookings />} />
             </Routes>
-            <button onClick={ () => setOpenModal(true)}>Open Modal</button>
-            { openModal && <Modal open={openModal} close={setOpenModal}/> }
-            <Modal />
+            {/* <button onClick={ () => setOpenModal(true)}>New Event</button>
+            { openModal && <Modal open={openModal} close={setOpenModal}/> } */}
+            {/* <Modal /> */}
           </BrowserRouter>
         </ApolloProvider>
-        
       </EventProvider>
     </AuthProvider>
   )

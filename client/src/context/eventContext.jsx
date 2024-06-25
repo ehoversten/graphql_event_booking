@@ -1,6 +1,7 @@
 import { useState, createContext, useReducer } from 'react';
 import { ADD_EVENT } from '../utils/mutations';
 import { useMutation } from '@apollo/client';
+import ErrorBoundary from '../components/Errors/ErrorBoundary';
 
 const initialState = {
     events: [],
@@ -22,6 +23,10 @@ export const EventContext = createContext(initialState);
 // });
 
 const eventReducer = (state, action) => {
+
+    console.log("Data State: ", state)
+    console.log("Data Action: ", action)
+
     switch(action.type) {
         case 'UPDATE_EVENTS':
             return {
@@ -53,7 +58,7 @@ const eventReducer = (state, action) => {
             case 'BOOK_EVENT':
                 return {
                     ...state,
-                    bookings: [...state, action.payload]
+                    bookings: [...action.payload]
                 }
             case 'CANCEL':
                 return {
@@ -105,8 +110,10 @@ export const EventProvider = (props) => {
 
     return (
         // <EventContext.Provider value={{ events: state.events, currentEvent: state.currentEvent, newEvent, deleteEvent, selectEvent}}>
-        <EventContext.Provider value={[state, dispatch]}>
-            {props.children}
-        </EventContext.Provider>
+        <ErrorBoundary>
+            <EventContext.Provider value={[state, dispatch]}>
+                {props.children}
+            </EventContext.Provider>
+        </ErrorBoundary>
     )
 }
