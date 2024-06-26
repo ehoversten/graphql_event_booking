@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { AuthContext } from '../../context/authContext';
 import { EventContext } from '../../context/eventContext';
 
-function EventDetail({ current, isLoggedIn, removeEvent, newBooking }) {
+function EventDetail({ current, isLoggedIn, removeEvent, newBooking, bookIt, notifyErr, notifyRmv }) {
 
   const auth = useContext(AuthContext);
   const [state, dispatch] = useContext(EventContext);
@@ -17,7 +17,9 @@ function EventDetail({ current, isLoggedIn, removeEvent, newBooking }) {
         type: 'REMOVE',
         payload: _id
       });
+      notifyRmv();
     } catch (error) {
+      notifyErr();
       console.log("Error: ", error)
     }
   }
@@ -31,8 +33,10 @@ function EventDetail({ current, isLoggedIn, removeEvent, newBooking }) {
         type: 'BOOK_EVENT',
         payload: _id
       });
+      // Call Toast Notification
+      bookIt();
     } catch (error) {
-
+      notifyErr();
       console.log("Error: ", error)
     }
   }

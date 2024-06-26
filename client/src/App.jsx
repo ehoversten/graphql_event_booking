@@ -12,9 +12,12 @@ import Signup from './components/Auth/Signup/Signup';
 import Landing from './components/Landing/Landing';
 import EventsContainer from './components/Events/EventsContainer/EventsContainer';
 import Bookings from './components/Booking/Bookings';
-import Modal from './components/Modal/Modal';
+// import Modal from './components/Modal/Modal';
 import './App.css';
-import ErrorBoundary from './components/Errors/ErrorBoundary';
+// import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+// import ErrorBoundary from './components/Errors/ErrorBoundary';
+import { ErrorBoundary } from 'react-error-boundary';
 
 // Contstruct the GraphQL Endpoint '/graphql'
 const httpLink = createHttpLink({
@@ -45,6 +48,8 @@ function App() {
   // const [openModal, setOpenModal] = useState(false);
 
   return (
+    <ErrorBoundary fallback={<h2>Something went wrong!</h2>}>
+
     <AuthProvider>
       <EventProvider>
         <ApolloProvider client={client}>
@@ -64,10 +69,13 @@ function App() {
             {/* <button onClick={ () => setOpenModal(true)}>New Event</button>
             { openModal && <Modal open={openModal} close={setOpenModal}/> } */}
             {/* <Modal /> */}
+            {/* <ToastContainer /> */}
           </BrowserRouter>
         </ApolloProvider>
       </EventProvider>
     </AuthProvider>
+
+    </ErrorBoundary>
   )
   // return (
   //   <ApolloProvider client={client}>

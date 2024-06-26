@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
 import { BookingContext } from '../../context/bookingContext';
 import { EventContext } from '../../context/eventContext';
-import ErrorBoundary from '../Errors/ErrorBoundary';
+import { ErrorBoundary } from 'react-error-boundary';
 
 function Bookings() {
 
@@ -76,7 +76,7 @@ function Bookings() {
         <div className="booking-list bg-sky-800 divide-y divide-slate-700 mx-auto mt-5">
           <h2>Current Bookings</h2>
           {/* { bookings.map(event => ( */}
-          <ErrorBoundary>
+          <ErrorBoundary fallback={<h2>Something went wrong with Bookings</h2>}>
           { myBookings.map(event => (
             <div className="booking-card p-5 flex justify-between" key={event._id}>
               <div className="sm:mx-auto sm:w-1/5 sm:max-w-sm mr-5 flex-column content-center rounded-full bg-sky-900">

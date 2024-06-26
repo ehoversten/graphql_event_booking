@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 
-function EventForm({ addNewEvent }) {
+function EventForm({ addNewEvent, notify }) {
 
     const [eventForm, setEventForm] = useState({
         title: '',
@@ -35,6 +35,7 @@ function EventForm({ addNewEvent }) {
             variables: { eventInput: eventInput }
         })
         // console.log("New Evt: ", data);
+        notify();
 
         setEventForm({
             title: '',

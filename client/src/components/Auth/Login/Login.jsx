@@ -9,7 +9,6 @@ import { AuthContext } from '../../../context/authContext'
 function Login() {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
-
   const { register, handleSubmit, formState } = useForm();
   const { errors } = formState;
 
@@ -61,7 +60,7 @@ function Login() {
         // localStorage.setItem('id_token', data.login.token);
         auth.login(data.login);
       }
-
+      // Call toast notification
       navigate('/events');
     } catch (error) {
       console.log('Error: ', error);

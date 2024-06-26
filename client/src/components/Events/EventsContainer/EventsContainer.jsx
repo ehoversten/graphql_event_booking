@@ -6,10 +6,15 @@ import { GET_EVENTS } from '../../../utils/queries';
 import { ADD_EVENT, REMOVE_EVENT, ADD_BOOKING } from '../../../utils/mutations';
 import EventDetail from '../EventDetail';
 import { EventContext } from '../../../context/eventContext';
+import { ErrorBoundary } from 'react-error-boundary';
+import { ToastContainer, toast } from 'react-toastify';
 
 function EventsContainer() {
   const token = localStorage.getItem('id_token');
-
+  const notify = () => toast("New Event Created")
+  const notifyBooked = () => toast("Event Booked!")
+  const notifyErr = () => toast("An Error Occurred")
+  const notifyRmv = () => toast("Event was removed")
   // const [currentEvent, setCurrentEvent] = useState(null);
 
   // const { events, currentEvent } = useContext(EventContext);
@@ -69,25 +74,31 @@ function EventsContainer() {
 
   return (
     <>
-        <div className='container mx-auto my-5 bg-sky-900 p-5 md:flex md:w-full'>
-          { state?.currentEvent && (
-          // { currentEvent && (
-            <EventDetail 
-              current={state.currentEvent} 
-              isLoggedIn={token}
-              removeEvent={removeEvent} 
-              newBooking={newBooking}
+      <ErrorBoundary fallback={<h2>Something went wrong with the Events</h2>}>
+          <div className='container mx-auto my-5 bg-sky-900 p-5 md:flex md:w-full'>
+            { state?.currentEvent && (
+            // { currentEvent && (
+              <EventDetail 
+                current={state.currentEvent} 
+                isLoggedIn={token}
+                removeEvent={removeEvent} 
+                newBooking={newBooking}
+                bookIt={notifyBooked}
+                notifyErr={notifyErr}
+                notifyRmv={notifyRmv}
+              />
+            )}
+            {/* { token && (
+              <EventForm addNewEvent={addNewEvent} notify={notify}/>
+            )} */}
+            <Events 
+              // events={events} 
+              events={state.events} 
+              setChoice={handleChoice}
             />
-          )}
-          {/* { token && (
-            <EventForm addNewEvent={addNewEvent}/>
-          )} */}
-          <Events 
-            // events={events} 
-            events={state.events} 
-            setChoice={handleChoice}
-          />
-        </div>
+            <ToastContainer />
+          </div>
+      </ErrorBoundary>
     </>
   )
 }

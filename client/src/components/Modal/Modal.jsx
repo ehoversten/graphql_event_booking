@@ -73,7 +73,7 @@ export const Modal = ({ open, close, children }) => {
     //     time: '',
     //     max_attendance: 1
     // })
-
+ 
     close(false)
   } 
 
