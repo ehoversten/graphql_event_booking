@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { AuthProvider } from './context/authContext';
+import { EventProvider } from './context/eventContext';
 import Dashboard from './components/Dashboard/Dashboard';
 import Navigation from './components/Navigation/Navigation';
 import Login from './components/Auth/Login/Login';
@@ -11,8 +12,12 @@ import Signup from './components/Auth/Signup/Signup';
 import Landing from './components/Landing/Landing';
 import EventsContainer from './components/Events/EventsContainer/EventsContainer';
 import Bookings from './components/Booking/Bookings';
-import Modal from './components/Modal/Modal';
+// import Modal from './components/Modal/Modal';
 import './App.css';
+// import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+// import ErrorBoundary from './components/Errors/ErrorBoundary';
+import { ErrorBoundary } from 'react-error-boundary';
 
 // Contstruct the GraphQL Endpoint '/graphql'
 const httpLink = createHttpLink({
@@ -40,30 +45,37 @@ const client = new ApolloClient({
 
 function App() {
 
-  const [openModal, setOpenModal] = useState(false);
+  // const [openModal, setOpenModal] = useState(false);
 
   return (
+    <ErrorBoundary fallback={<h2>Something went wrong!</h2>}>
+
     <AuthProvider>
-      <ApolloProvider client={client}>
-        <BrowserRouter>
-          <Navigation />
-          <Routes>
-            <Route path='/' element={<Landing />}>
-              <Route path='events' element={<EventsContainer />}/> 
-            </Route>
-            <Route path='login' element={<Login />}/>
-            <Route path='signup' element={<Signup />}/>
-            <Route path='dashboard' element={<Dashboard />}>
-              <Route path='events' element={<EventsContainer />}/> 
-            </Route>
-            <Route path='bookings' element={<Bookings />} />
-          </Routes>
-          <button onClick={ () => setOpenModal(true)}>Open Modal</button>
-          { openModal && <Modal open={openModal} close={setOpenModal}/> }
-          <Modal />
-        </BrowserRouter>
-      </ApolloProvider>
+      <EventProvider>
+        <ApolloProvider client={client}>
+          <BrowserRouter>
+            <Navigation />
+            <Routes>
+              <Route path='/' element={<Landing />}>
+                <Route path='events' element={<EventsContainer />}/> 
+              </Route>
+              <Route path='login' element={<Login />}/>
+              <Route path='signup' element={<Signup />}/>
+              <Route path='dashboard' element={<Dashboard />}>
+                <Route path='events' element={<EventsContainer />}/> 
+              </Route>
+              <Route path='bookings' element={<Bookings />} />
+            </Routes>
+            {/* <button onClick={ () => setOpenModal(true)}>New Event</button>
+            { openModal && <Modal open={openModal} close={setOpenModal}/> } */}
+            {/* <Modal /> */}
+            {/* <ToastContainer /> */}
+          </BrowserRouter>
+        </ApolloProvider>
+      </EventProvider>
     </AuthProvider>
+
+    </ErrorBoundary>
   )
   // return (
   //   <ApolloProvider client={client}>

@@ -1,16 +1,25 @@
-import React, { useContext} from 'react'
+import React, { useContext } from 'react'
 import { AuthContext } from '../../context/authContext';
+import { EventContext } from '../../context/eventContext';
 
-function EventDetail({ current, isLoggedIn, removeEvent, newBooking }) {
+function EventDetail({ current, isLoggedIn, removeEvent, newBooking, bookIt, notifyErr, notifyRmv }) {
 
   const auth = useContext(AuthContext);
+  const [state, dispatch] = useContext(EventContext);
 
   const handleDelete = async (_id) => {
     console.log("ID: ", _id);
     try {
       const { data } = await removeEvent({ variables: { id: _id }})
-      // console.log("Query Data: ", data)
+      console.log("Query Data: ", data)
+
+      dispatch({
+        type: 'REMOVE',
+        payload: _id
+      });
+      notifyRmv();
     } catch (error) {
+      notifyErr();
       console.log("Error: ", error)
     }
   }
@@ -19,8 +28,15 @@ function EventDetail({ current, isLoggedIn, removeEvent, newBooking }) {
     console.log("ID: ", _id);
     try {
       await newBooking({ variables: { eventId: _id }})
-    } catch (error) {
 
+      dispatch({
+        type: 'BOOK_EVENT',
+        payload: _id
+      });
+      // Call Toast Notification
+      bookIt();
+    } catch (error) {
+      notifyErr();
       console.log("Error: ", error)
     }
   }

@@ -4,11 +4,15 @@ import { GET_BOOKINGS } from '../../utils/queries'
 import { CANCEL_BOOKING } from '../../utils/mutations';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
+import { BookingContext } from '../../context/bookingContext';
+import { EventContext } from '../../context/eventContext';
+import { ErrorBoundary } from 'react-error-boundary';
 
 function Bookings() {
 
   const navigate = useNavigate()
   const auth = useContext(AuthContext);
+  const [state, dispatch] = useContext(EventContext)
   console.log("Auth: ", auth);
 
   // GET CURRENT USERS BOOKINGS
@@ -27,25 +31,39 @@ function Bookings() {
       console.log("No user authorized")
       navigate('/login');
     }
-  }, [auth.user, data]) 
+
+    if(data) {
+      dispatch({
+        type: 'UPDATE_BOOKINGS',
+        payload: data.bookings
+      })
+    }
+  }, [auth.user, data, loading, dispatch]) 
+  // }, [auth.user, data, loading]) 
   
 
   if(error) return (<h2>Error: </h2>);
   if(loading) return (<h2>LOADING...</h2>);
 
-  const bookings = data?.bookings || [];
+  // const bookings = data?.bookings || [];
   const myBookings = data?.bookings.filter(elem => { 
                                     if(elem.userId._id == auth.user?.data._id) { 
                                       return elem 
                                     } 
                                   }) || [];
-  console.log("Bookings: ", bookings);
+  // console.log("Bookings: ", bookings);
   console.log("MY Bookings: ", myBookings);
 
   const handleCancel = async (id) => {
     console.log("Booking ID: ", id);
     try {
       await cancelBooking({ variables: { eventId: id}});
+
+      dispatch({
+        type: 'CANCEL',
+        payload: id
+      })
+      
     } catch (error) {
       console.log("Error: ", error);
     } 
@@ -58,6 +76,7 @@ function Bookings() {
         <div className="booking-list bg-sky-800 divide-y divide-slate-700 mx-auto mt-5">
           <h2>Current Bookings</h2>
           {/* { bookings.map(event => ( */}
+          <ErrorBoundary fallback={<h2>Something went wrong with Bookings</h2>}>
           { myBookings.map(event => (
             <div className="booking-card p-5 flex justify-between" key={event._id}>
               <div className="sm:mx-auto sm:w-1/5 sm:max-w-sm mr-5 flex-column content-center rounded-full bg-sky-900">
@@ -82,6 +101,7 @@ function Bookings() {
             </div>
           </div>
           ))}
+          </ErrorBoundary>
         </div>
         }
     </div>

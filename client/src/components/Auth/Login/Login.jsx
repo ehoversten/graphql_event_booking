@@ -1,5 +1,6 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { LOGIN } from '../../../utils/mutations'
 import { GraphQLError } from 'graphql' 
@@ -8,34 +9,45 @@ import { AuthContext } from '../../../context/authContext'
 function Login() {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
-  const [loginFormData, setLoginFormData] = useState({
-    email: '',
-    password: ''
-  })
+  const { register, handleSubmit, formState } = useForm();
+  const { errors } = formState;
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // const [loginFormData, setLoginFormData] = useState({
+  //   email: '',
+  //   password: ''
+  // })
 
-  const [login, {error, loading}] = useMutation(LOGIN, {
-    variables: { loginInput: loginFormData }
-  })
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+
+  // const [login, {error, loading}] = useMutation(LOGIN, {
+  //   variables: { loginInput: loginFormData }
+  // })
+  const [login, {error, loading}] = useMutation(LOGIN);
+
+  useEffect(() => {
+    console.log("Auth State: ", auth);
+  }, [auth])
 
   if(loading) return (<h2>LOADING...</h2>)
   if(error) return (<h2>Error: ${error}</h2>)
 
-  const handleChange = (event) => {
-    setLoginFormData({
-      ...loginFormData,
-      [event.target.name]: event.target.value
-    }) 
-  }
+  // const handleChange = (event) => {
+  //   setLoginFormData({
+  //     ...loginFormData,
+  //     [event.target.name]: event.target.value
+  //   }) 
+  // }
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  // const handleSubmit = async (event) => {
+  const onSubmit = async (data) => {
+    // event.preventDefault();
+
+    console.log("Data Submitting: ", data);
 
     let loginInput = {
-      email: email,
-      password: password
+      email: data.email,
+      password: data.password
     }
 
     try {
@@ -48,7 +60,7 @@ function Login() {
         // localStorage.setItem('id_token', data.login.token);
         auth.login(data.login);
       }
-
+      // Call toast notification
       navigate('/events');
     } catch (error) {
       console.log('Error: ', error);
@@ -69,28 +81,42 @@ function Login() {
             Sign in to your account
           </h2>
         </div>
-      <form className="login-form" onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
         <div className="form-control mt-2">
           <label htmlFor="email" className="block text-sm font-medium leading-6 text-slate-300 mb-1">Email</label>
           <input 
             type="email"
-            name='email'
             id="email" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            // name='email'
+            // value={email}
+            // onChange={(e) => setEmail(e.target.value)}
             className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6"
+            {...register("email", { 
+              required: {
+                value: true,
+                message: "Email is required"
+              }
+            })}
             />
+            <p className="form-error">{errors.email?.message}</p>
         </div>
         <div className="form-control mt-2">
           <label htmlFor="password" className="block text-sm font-medium leading-6 text-slate-300 mb-1">Password</label>
           <input 
             type="password"
-            name='password'
             id="password" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            // name='password'
+            // value={password}
+            // onChange={(e) => setPassword(e.target.value)}
             className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-200 sm:text-sm sm:leading-6"
+            {...register("password", {
+              required: {
+                value: true,
+                message: "password cannot be empty"
+              }
+            })}
             />
+            <p className="form-error">{errors.password?.message}</p>
         </div>
         <button type="submit" className="flex w-full justify-center rounded-md bg-orange-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 mt-5">Submit</button>
       </form>

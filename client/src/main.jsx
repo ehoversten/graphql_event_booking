@@ -8,12 +8,13 @@ import Signup from './components/Auth/Signup/Signup.jsx';
 import './index.css';
 import Dashboard from './components/Dashboard/Dashboard.jsx';
 import Landing from './components/Landing/Landing.jsx';
+import ErrorBoundary from './components/Errors/ErrorBoundary.jsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
-    errorElement: <h2>Error Page!</h2>,
+    errorElement: <ErrorBoundary />,
     children: [
       {
         path: 'login',

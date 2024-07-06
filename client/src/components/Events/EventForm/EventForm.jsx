@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 
-function EventForm({ addNewEvent }) {
+function EventForm({ addNewEvent, notify }) {
 
     const [eventForm, setEventForm] = useState({
         title: '',
@@ -35,6 +35,7 @@ function EventForm({ addNewEvent }) {
             variables: { eventInput: eventInput }
         })
         // console.log("New Evt: ", data);
+        notify();
 
         setEventForm({
             title: '',
@@ -44,6 +45,7 @@ function EventForm({ addNewEvent }) {
             time: '',
             max_attendance: 1
         })
+
     } 
 
   return (
@@ -130,7 +132,6 @@ function EventForm({ addNewEvent }) {
                 </div>
 
             </div>
-
 
             <div className="form-control mt-2">
                 <button type="submit" className='flex w-full justify-center rounded-md bg-orange-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 mt-5'>Create Event</button>

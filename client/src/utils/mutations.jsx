@@ -14,7 +14,7 @@ export const LOGIN = gql`
 `
 
 export const REGISTER = gql`
-    mutation register($userInput: UserInput!) {
+    mutation signup($userInput: UserInput!) {
         register(userInput: $userInput) {
             token
             user {
